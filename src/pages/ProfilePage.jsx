@@ -1,9 +1,9 @@
 import { CircularProgress, Container, Typography } from "@mui/material";
 import useFetchData from "@src/hooks/useFetchData";
-import PersonalInformation from "@src/components/profilePage/PersonalInformation";
-import UserPreferences from "@src/components/profilePage/UserPreferences";
-import UserWatchlist from "@src/components/profilePage/UserWatchlist";
-import UserReviews from "@src/components/profilePage/UserReviews";
+import PersonalInformation from "@src/components/ProfilePage/PersonalInformation";
+import UserPreferences from "@src/components/ProfilePage/UserPreferences";
+import UserWatchlist from "@src/components/ProfilePage/UserWatchlist";
+import UserReviews from "@src/components/ProfilePage/UserReviews";
 import SkeletonLoader from '@src/components/Common/SkeletonLoader';
 import ErrorDisplay from '@src/components/Common/ErrorDisplay';
 
