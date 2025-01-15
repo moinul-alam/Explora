@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Avatar, Box, Typography, Paper, Divider, Button, TextField, CircularProgress, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
 import FallbackImage from '@src/assets/fallback-image.png';
-import api from '@src/utils/API';
+import api from '@src/utils/api';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
