@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import api from "@src/utils/API";
+import api from "@src/utils/api";
 
 const useMediaGallery = (fetchUrl, fetchMoreOnScroll = true) => {
   const [mediaItems, setMediaItems] = useState([]);

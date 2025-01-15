@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react";
+import { forwardRef } from "react";
 import { Box } from "@mui/material";
 
 const HeroCard = forwardRef(({ movies }, ref) => (
