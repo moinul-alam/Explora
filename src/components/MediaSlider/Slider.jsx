@@ -1,10 +1,10 @@
 import React, { useRef, useState } from 'react';
 import { Box } from '@mui/material';
-import { useNavigate } from 'react-router-dom';  // Import useNavigate
+import { useNavigate } from 'react-router-dom'; 
 import MediaCard from '@src/components/Common/MediaCard/MediaCard';
 
 const Slider = ({ items, detailBaseUrl, onMouseEnter, onMouseLeave }) => {
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
   const sliderRef = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -42,10 +42,9 @@ const Slider = ({ items, detailBaseUrl, onMouseEnter, onMouseLeave }) => {
             key={item.id}
             sx={{ flex: '0 0 auto', width: `${130 / items.length}%` }}
           >
-            {/* Render MediaCard */}
             <MediaCard
               mediaData={item}
-              onClick={() => navigate(`${detailBaseUrl}/${item.id}`)} // Use navigate here with single quotes
+              onClick={() => navigate(`${detailBaseUrl}/${item.id}`)}
             />
           </Box>
         ))}
