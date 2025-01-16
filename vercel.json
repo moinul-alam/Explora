@@ -1,6 +1,6 @@
 {
   "rewrites": [
     { "source": "/api/(.*)", "destination": "https://express-core.onrender.com/api/$1" },
-    { "source": "/[^.]+", "destination": "/", "status": 200 }
+    { "source": "/[^.]+", "destination": "/" }
   ]
 }
