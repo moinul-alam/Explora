@@ -1,18 +1,18 @@
-//api.jsx@src/utils
-
+// api.jsx @ src/utils
 import axios from 'axios';
 
 // Create an Axios instance
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:12345/api', // Base URL for your backend
-    withCredentials: true,
-  });  
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:12345/api', // Base URL for your backend
+  withCredentials: true, // Include credentials for cross-origin requests
+});
 
 // Request interceptor
 api.interceptors.request.use(
   (config) => {
-    // Modify config before sending the request (e.g., add headers)
-    console.log(`[API Request] ${config.method.toUpperCase()}: ${config.url}`);
+    if (import.meta.env.MODE !== 'production') {
+      console.log(`[API Request] ${config.method.toUpperCase()}: ${config.url}`);
+    }
     return config;
   },
   (error) => {
@@ -24,14 +24,15 @@ api.interceptors.request.use(
 // Response interceptor
 api.interceptors.response.use(
   (response) => {
-    console.log('[API Response]', response);
+    if (import.meta.env.MODE !== 'production') {
+      console.log('[API Response]', response);
+    }
     return response.data; // Simplify response to only return data
   },
   (error) => {
-    // Handle errors globally
     console.error('[API Response Error]', error.response || error.message);
-    const errResponse = error.response?.data || { message: 'An error occurred' };
-    return Promise.reject(errResponse); // Pass the error to the caller
+    const errResponse = error.response?.data || { message: 'An unexpected error occurred. Please try again later.' };
+    return Promise.reject(errResponse);
   }
 );
 
