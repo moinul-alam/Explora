@@ -17,12 +17,14 @@ const MediaGallery = ({ title, fetchUrl, viewAllUrl, detailBaseUrl, color }) => 
 
   return (
     <Box sx={{ width: '100%', margin: '0.5rem' }}>
-      {/* Section Header */}
       <Box
         sx={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
+          backgroundColor: color,
+          padding: '1rem',
+          borderRadius: '8px',
         }}
       >
         <Typography variant='h3' fontWeight='bold'>
@@ -49,17 +51,17 @@ const MediaGallery = ({ title, fetchUrl, viewAllUrl, detailBaseUrl, color }) => 
           ref={sliderRef}
           sx={{
             display: 'flex',
-            animation: isHovered ? 'none' : 'scroll 40s linear infinite',
+            animation: isHovered ? 'none' : 'scroll 80s linear infinite', 
             '&:hover': {
               animationPlayState: 'paused',
             },
-            width: `${media.length * 200}%`,
+            width: `${media.length * 150}%`,
           }}
         >
           {media.map((item) => (
             <Box
               key={item.id}
-              sx={{ flex: '0 0 auto', width: `${130 / media.length}%` }}
+              sx={{ flex: '0 0 auto', width: `${100 / media.length}%` }} 
             >
               <MediaCard
                 mediaData={item}

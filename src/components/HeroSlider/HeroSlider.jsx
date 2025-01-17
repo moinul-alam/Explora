@@ -1,40 +1,33 @@
-import { useRef } from "react";
+import { useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import useFetchData from "@src/hooks/useFetchData";
-import { Slider, SlideControls, HeroText } from "@src/components/HeroSlider/index";
-import SkeletonLoader from '@src/components/Common/SkeletonLoader';
-import ErrorDisplay from '@src/components/Common/ErrorDisplay';
+import SkeletonLoader from "@src/components/Common/SkeletonLoader";
+import ErrorDisplay from "@src/components/Common/ErrorDisplay";
+import HeroText from "@src/components/HeroSlider/HeroText";
 
 const HeroSlider = () => {
-  // Move all hooks to the top level
   const { data: movies, loading, error } = useFetchData("/media/category/movie/trending");
-  const sliderRef = useRef(null);
-  const currentIndexRef = useRef(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [effect, setEffect] = useState("zoomIn");
 
-  // Then handle conditional returns
+  const autoEffectInterval = 5000;
+  const transitionDuration = 1000;
+
+  const effects = ["zoomIn", "fade", "scale", "rotate"];
+
+  useEffect(() => {
+    if (movies?.length) {
+      const interval = setInterval(() => {
+        setCurrentIndex((prev) => (prev + 1) % movies.length);
+        setEffect(effects[Math.floor(Math.random() * effects.length)]);
+      }, autoEffectInterval);
+
+      return () => clearInterval(interval);
+    }
+  }, [movies]);
+
   if (loading) return <SkeletonLoader type="hero" />;
   if (error) return <ErrorDisplay message={error.message} />;
-
-  const scrollToSlide = (index) => {
-    const slider = sliderRef.current;
-    if (slider) {
-      const slideWidth = slider.offsetWidth;
-      slider.scrollTo({ left: slideWidth * index, behavior: "smooth" });
-      currentIndexRef.current = index;
-    }
-  };
-
-  const handlePrevSlide = () => {
-    if (!movies?.length) return;
-    const prevIndex = (currentIndexRef.current - 1 + movies.length) % movies.length;
-    scrollToSlide(prevIndex);
-  };
-
-  const handleNextSlide = () => {
-    if (!movies?.length) return;
-    const nextIndex = (currentIndexRef.current + 1) % movies.length;
-    scrollToSlide(nextIndex);
-  };
 
   return (
     <Box
@@ -42,12 +35,41 @@ const HeroSlider = () => {
         position: "relative",
         width: "100%",
         height: { xs: "50vh", sm: "60vh", md: "600px" },
-        backgroundColor: "#333",
         overflow: "hidden",
       }}
     >
-      <Slider ref={sliderRef} movies={movies} />
-      <SlideControls handlePrevSlide={handlePrevSlide} handleNextSlide={handleNextSlide} />
+      {/* Display Current Slide */}
+      {movies.map((movie, index) => (
+        <Box
+          key={movie.id}
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundImage: `url(${
+              movie.backdrop_path
+                ? `https://image.tmdb.org/t/p/original${movie.backdrop_path}`
+                : "/fallback.jpg"
+            })`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            opacity: currentIndex === index ? 1 : 0,
+            transform:
+              currentIndex === index
+                ? effect === "zoomIn"
+                  ? "scale(1.1)"
+                  : effect === "scale"
+                  ? "scale(1.05)"
+                  : effect === "rotate"
+                  ? "rotate(3deg) scale(1.1)"
+                  : "none"
+                : "scale(1)",
+            transition: `opacity ${transitionDuration}ms ease-in-out, transform ${transitionDuration}ms ease-in-out`,
+          }}
+        />
+      ))}
       <HeroText />
     </Box>
   );
