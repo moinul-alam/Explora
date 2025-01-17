@@ -1,17 +1,21 @@
-// SearchBar.js
 import { useState, useEffect } from 'react';
 import { Autocomplete, TextField, Box, InputAdornment } from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import useSearch from '@src/hooks/useSearch';
 import FallbackImage from '@src/assets/fallback-image.png';
+import { useTheme, useMediaQuery } from '@mui/material';
 
-const SearchBar = ({ isMobile }) => {
+const SearchBar = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const searchResults = useSearch(searchQuery);
+
+  // Responsive hook for managing screen size
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // Small screen check
 
   useEffect(() => {
     let debounceTimeout;
@@ -38,19 +42,22 @@ const SearchBar = ({ isMobile }) => {
           ? `/person/${value.id}`
           : `/details/${value.mediaType}/${value.id}`;
       navigate(route);
-      setOpen(false);  // Close dropdown after selection
-      setSearchQuery('');  // Clear search after selection
+      setOpen(false); // Close dropdown after selection
+      setSearchQuery(''); // Clear search after selection
     }
   };
 
-  // Only show options if we have results and the dropdown is open
   const showOptions = searchResults.length > 0 && open;
 
   return (
-    <Box sx={{ 
-      width: isMobile ? '15rem' : '20rem',
-      mx: isMobile ? 0 : 'auto'
-    }}>
+    <Box
+      sx={{
+        width: isMobile ? '100%' : '20rem',
+        mx: isMobile ? 1 : 'auto', // Margin adjustment
+        position: 'relative', // Helps manage dropdown position
+        zIndex: 1, // Ensures dropdown is on top
+      }}
+    >
       <Autocomplete
         open={open}
         onOpen={() => setOpen(true)}
@@ -58,14 +65,13 @@ const SearchBar = ({ isMobile }) => {
         freeSolo
         options={searchResults}
         getOptionLabel={(option) => {
-          // Handle both string inputs and option objects
-          return typeof option === 'string' ? option : (option.title|| '')
+          return typeof option === 'string' ? option : option.title || '';
         }}
         onInputChange={(event, newInputValue) => setSearchQuery(newInputValue)}
         onChange={handleSelect}
         loading={isSearching}
         loadingText="Searching..."
-        noOptionsText={searchQuery.trim() ? "No results found" : "Type to search"}
+        noOptionsText={searchQuery.trim() ? 'No results found' : 'Type to search'}
         renderOption={(props, option) => (
           <Box component="li" {...props}>
             <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
@@ -76,29 +82,35 @@ const SearchBar = ({ isMobile }) => {
                     : FallbackImage
                 }
                 alt={option.title}
-                style={{ 
-                  marginRight: 10, 
-                  width: 40, 
-                  height: 60, 
-                  objectFit: 'cover' 
+                style={{
+                  marginRight: 10,
+                  width: 40,
+                  height: 60,
+                  objectFit: 'cover',
                 }}
               />
-              <Box sx={{ 
-                flexGrow: 1,
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap'
-              }}>
+              <Box
+                sx={{
+                  flexGrow: 1,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
                 {option.title}
               </Box>
             </Box>
           </Box>
-        )}        
+        )}
         renderInput={(params) => (
           <TextField
             {...params}
             variant="outlined"
-            placeholder={isMobile ? "Search..." : "Search Movies, TV Shows, People and more"}
+            placeholder={
+              isMobile
+                ? 'Search...'
+                : 'Search Movies, TV Shows, People and more'
+            }
             size="small"
             fullWidth
             onKeyDown={handleKeyDown}
@@ -112,6 +124,11 @@ const SearchBar = ({ isMobile }) => {
             }}
           />
         )}
+        PopperProps={{
+          sx: {
+            zIndex: theme.zIndex.modal, // Ensures dropdown doesn't get overlapped
+          },
+        }}
       />
     </Box>
   );

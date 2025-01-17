@@ -1,10 +1,7 @@
-// NavigationMenu.js
-import { Box, useTheme, useMediaQuery } from '@mui/material';
+import { Box } from '@mui/material';
 import DropdownButton from '@src/components/Header/DropdownButton';
 
-const NavigationMenu = ({ isMobile }) => {
-  const theme = useTheme();
-
+const NavigationMenu = ({ isMobile, onItemClick }) => {
   const moviesItems = [
     { label: 'Trending Movies', link: '/category/movie/trending' },
     { label: 'Popular Movies', link: '/category/movie/popular' },
@@ -36,12 +33,26 @@ const NavigationMenu = ({ isMobile }) => {
         width: isMobile ? '100%' : 'auto',
       }}
     >
-      <DropdownButton label="MOVIES" items={moviesItems} isMobile={isMobile} />
-      <DropdownButton label="TV SHOWS" items={tvShowsItems} isMobile={isMobile} />
-      <DropdownButton label="EXPLORE" items={exploreItems} isMobile={isMobile} />
+      <DropdownButton
+        label="MOVIES"
+        items={moviesItems}
+        isMobile={isMobile}
+        onItemClick={onItemClick}
+      />
+      <DropdownButton
+        label="TV SHOWS"
+        items={tvShowsItems}
+        isMobile={isMobile}
+        onItemClick={onItemClick}
+      />
+      <DropdownButton
+        label="EXPLORE"
+        items={exploreItems}
+        isMobile={isMobile}
+        onItemClick={onItemClick}
+      />
     </Box>
   );
 };
 
 export default NavigationMenu;
-

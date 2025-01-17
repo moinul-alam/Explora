@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Menu, MenuItem } from '@mui/material';
 import { ArrowDropDown as ArrowDropDownIcon } from '@mui/icons-material';
 
-const DropdownButton = ({ label, items }) => {
+const DropdownButton = ({ label, items, onItemClick }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const navigate = useNavigate();
 
@@ -11,6 +11,10 @@ const DropdownButton = ({ label, items }) => {
   const handleClose = () => setAnchorEl(null);
 
   const handleItemClick = (item) => {
+    if (onItemClick) {
+      onItemClick(item); // Invoke the callback with the clicked item
+    }
+
     if (item.label === 'Logout') {
       item.onClick();
     } else if (item.link) {
@@ -52,15 +56,16 @@ const DropdownButton = ({ label, items }) => {
         <ArrowDropDownIcon sx={{ marginLeft: 1 }} />
       </Button>
 
-      <Menu 
-          anchorEl={anchorEl} 
-          open={Boolean(anchorEl)} 
-          onClose={handleClose}
-          sx={{
-            '& .MuiPaper-root': {
-              borderRadius: 0.5,
-            },
-          }}>
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+        sx={{
+          '& .MuiPaper-root': {
+            borderRadius: 0.5,
+          },
+        }}
+      >
         {items.map((item, index) => (
           <MenuItem
             key={index}

@@ -13,6 +13,10 @@ const Header = () => {
     setIsDrawerOpen(prevState => !prevState);
   };
 
+  const handleItemClick = () => {
+    setIsDrawerOpen(false); // Close the drawer when an item is clicked
+  };
+
   return (
     <AppBar 
       position="fixed" 
@@ -69,14 +73,34 @@ const Header = () => {
         sx={{
           display: { xs: 'block', md: 'none' },
           '& .MuiDrawer-paper': {
-            width: '280px',
+            width: '50%', // Dynamic width for better adaptability
+            maxWidth: '320px', // Set a max-width for consistency
             boxSizing: 'border-box',
             p: 2,
+            backgroundColor: (theme) => theme.palette.background.default, // Match app theme
           },
         }}
       >
-        <Box sx={{ mt: 8, display: 'flex', flexDirection: 'column', gap: 3 }}>
-          <NavigationMenu isMobile={true} />
+        {/* Close Button */}
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            mb: 2,
+          }}
+        >
+          <IconButton
+            color="inherit"
+            onClick={toggleDrawer}
+            aria-label="close drawer"
+          >
+            <MenuIcon />
+          </IconButton>
+        </Box>
+
+        {/* Drawer Content */}
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <NavigationMenu isMobile={true} onItemClick={handleItemClick} />
           <ProfileArea isMobile={true} />
           <ThemeToggler />
         </Box>
