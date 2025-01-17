@@ -6,7 +6,6 @@ const MediaCategoryPage = () => {
   const { mediaType, mediaCategory } = useParams();
   const navigate = useNavigate();
 
-  // Format the category name (e.g., "top_rated" -> "Top Rated")
   const formatCategory = (category) => {
     return category
       .split('_')
@@ -14,7 +13,6 @@ const MediaCategoryPage = () => {
       .join(' ');
   };
 
-  // Format the media type (e.g., "movie" -> "Movies")
   const formatMediaType = (type) => {
     const formatted = type.charAt(0).toUpperCase() + type.slice(1);
     return formatted.endsWith('s') ? formatted : `${formatted}s`;
