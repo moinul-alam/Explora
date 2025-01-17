@@ -1,4 +1,3 @@
-// MediaCard.jsx
 import { Box, Typography } from '@mui/material';
 import RatingBadge from '@src/components/Common/MediaCard/RatingBadge';
 import YearBadge from '@src/components/Common/MediaCard/YearBadge';
@@ -13,18 +12,18 @@ const MediaCard = ({ mediaData, onClick }) => {
       onClick={onClick}
       sx={{
         position: 'relative',
-        minWidth: '12.5rem',
-        maxWidth: '15.625rem',
-        padding: '0.625rem',
+        width: { xs: '10rem', sm: '12.5rem', md: '15rem' },
+        margin: '0.5rem',
         cursor: 'pointer',
         transition: 'transform 0.5s ease',
         '&:hover': { transform: 'scale(1.05)' },
       }}
     >
+      {/* Poster */}
       <Box
         sx={{
           position: 'relative',
-          height: '18.75rem',
+          height: { xs: '15rem', sm: '18rem', md: '20rem' },
           backgroundImage: `url(https://image.tmdb.org/t/p/w500${poster_path || '/fallback.jpg'})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
@@ -37,6 +36,8 @@ const MediaCard = ({ mediaData, onClick }) => {
         <YearBadge year={release_date || first_air_date} />
         <MediaOverview overview={overview} />
       </Box>
+
+      {/* Title */}
       <Box
         sx={{
           width: '100%',
@@ -55,6 +56,7 @@ const MediaCard = ({ mediaData, onClick }) => {
           variant="body1"
           sx={{
             fontWeight: 'bold',
+            fontSize: { xs: '0.8rem', sm: '0.9rem', md: '1rem' }, 
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
@@ -68,4 +70,3 @@ const MediaCard = ({ mediaData, onClick }) => {
 };
 
 export default MediaCard;
-
