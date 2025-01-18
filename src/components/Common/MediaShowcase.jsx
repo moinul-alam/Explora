@@ -1,17 +1,55 @@
 import { useRef, useEffect } from 'react';
-import { IconButton } from '@mui/material';
+import { IconButton, Box } from '@mui/material';
 import { ArrowForward, ArrowBack } from '@mui/icons-material';
 import MediaCard from '@src/components/Common/MediaCard/MediaCard';
 
-const MediaShowcase = ({ data, onCardClick }) => {
+const MediaShowcase = ({
+  data = [],
+  onCardClick,
+  itemsPerView = {
+    xs: 1,    // mobile
+    sm: 2,    // tablet
+    md: 3,    // small desktop
+    lg: 4,    // large desktop
+  },
+  spacing = 2,             // spacing between items
+}) => {
   const scrollContainerRef = useRef(null);
+
+  // Function to calculate item width based on screen size
+  const calculateItemWidth = () => {
+    const container = scrollContainerRef.current;
+    if (!container) return 0;
+    
+    const viewportWidth = window.innerWidth;
+    let itemsToShow;
+    
+    if (viewportWidth < 600) itemsToShow = itemsPerView.xs;
+    else if (viewportWidth < 960) itemsToShow = itemsPerView.sm;
+    else if (viewportWidth < 1280) itemsToShow = itemsPerView.md;
+    else itemsToShow = itemsPerView.lg;
+
+    const totalSpacing = (itemsToShow - 1) * (spacing * 8);
+    const availableWidth = container.clientWidth - totalSpacing;
+    return Math.floor(availableWidth / itemsToShow);
+  };
 
   const scroll = (direction) => {
     const container = scrollContainerRef.current;
     if (container) {
-      const scrollAmount = direction === 'left' ? -300 : 300;
+      const scrollAmount = direction === 'left' ? -container.offsetWidth : container.offsetWidth;
       container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
     }
+  };
+
+  const isStartDisabled = () => {
+    return scrollContainerRef.current?.scrollLeft === 0;
+  };
+
+  const isEndDisabled = () => {
+    const container = scrollContainerRef.current;
+    if (!container) return true;
+    return Math.abs(container.scrollWidth - container.clientWidth - container.scrollLeft) < 1;
   };
 
   useEffect(() => {
@@ -28,39 +66,94 @@ const MediaShowcase = ({ data, onCardClick }) => {
   }, []);
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center' }}>
-      <IconButton onClick={() => scroll('left')} disabled={scrollContainerRef.current?.scrollLeft === 0}>
-        <ArrowBack />
-      </IconButton>
-      <div
-        ref={scrollContainerRef}
-        style={{
-          display: 'flex',
-          gap: '10px',
-          padding: '10px 0',
-          flex: 1,
-          scrollBehavior: 'smooth',
-          overflow: 'hidden',
+    <Box sx={{ position: 'relative', width: '100%' }}>
+      {/* Main container */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: spacing }}>
+        {/* Left scroll button */}
+        <IconButton 
+          onClick={() => scroll('left')} 
+          disabled={isStartDisabled()}
+          sx={{ 
+            display: { xs: 'none', md: 'flex' },
+            padding: 1
+          }}
+        >
+          <ArrowBack />
+        </IconButton>
+
+        {/* Scrollable content */}
+        <Box
+          ref={scrollContainerRef}
+          sx={{
+            display: 'flex',
+            gap: spacing,
+            padding: '16px 8px',
+            overflowX: 'auto',
+            scrollBehavior: 'smooth',
+            scrollSnapType: 'x mandatory',
+            '&::-webkit-scrollbar': { display: 'none' },
+            msOverflowStyle: 'none',
+            scrollbarWidth: 'none',
+            flex: 1
+          }}
+        >
+          {data.map((media) => (
+            <Box
+              key={media.id}
+              sx={{
+                flexShrink: 0,
+                scrollSnapAlign: 'start',
+                width: `${calculateItemWidth()}px`,
+                display: 'flex',
+                justifyContent: 'center',
+              }}
+            >
+              <MediaCard
+                mediaData={media}
+                onClick={() => onCardClick(media)}
+              />
+            </Box>
+          ))}
+        </Box>
+
+        {/* Right scroll button */}
+        <IconButton
+          onClick={() => scroll('right')}
+          disabled={isEndDisabled()}
+          sx={{ 
+            display: { xs: 'none', md: 'flex' },
+            padding: 1
+          }}
+        >
+          <ArrowForward />
+        </IconButton>
+      </Box>
+
+      {/* Mobile scroll buttons */}
+      <Box
+        sx={{
+          display: { xs: 'flex', md: 'none' },
+          justifyContent: 'center',
+          gap: 1,
+          mt: 1
         }}
       >
-        {data?.map((media) => (
-          <MediaCard
-            key={media.id}
-            mediaData={media}
-            onClick={() => onCardClick(media)}
-          />
-        ))}
-      </div>
-      <IconButton
-        onClick={() => scroll('right')}
-        disabled={
-          scrollContainerRef.current?.scrollWidth ===
-          scrollContainerRef.current?.scrollLeft + scrollContainerRef.current?.clientWidth
-        }
-      >
-        <ArrowForward />
-      </IconButton>
-    </div>
+        <IconButton
+          onClick={() => scroll('left')}
+          disabled={isStartDisabled()}
+          size="small"
+        >
+          <ArrowBack />
+        </IconButton>
+        <IconButton
+          onClick={() => scroll('right')}
+          disabled={isEndDisabled()}
+          size="small"
+        >
+          <ArrowForward />
+        </IconButton>
+      </Box>
+    </Box>
   );
 };
 
