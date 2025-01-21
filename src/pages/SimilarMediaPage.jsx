@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Autocomplete, TextField, Box, InputAdornment, Typography, CircularProgress } from "@mui/material";
 import { Search as SearchIcon } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import useSearch from "@src/hooks/useSearch";
+import useMediaSearch from "@src/hooks/useMediaSearch";
 import useFetchData from "@src/hooks/useFetchData";
 import MediaShowcase from "@src/components/Common/MediaShowcase";
 import FallbackImage from "@src/assets/fallback-image.png";
@@ -13,7 +13,7 @@ const SimilarMediaPage = () => {
   const [selectedMedia, setSelectedMedia] = useState(null);
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-  const searchResults = useSearch(searchQuery);
+  const searchResults = useMediaSearch(searchQuery);
   const isMobile = useMediaQuery("(max-width:600px)");
 
   // Fetch similar media using useFetchData
