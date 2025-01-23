@@ -66,11 +66,9 @@ const Footer = () => {
         </Box>
 
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', flex: 1 }}>
-          <Box sx={{ textAlign: 'right' }}>
+          <Box sx={{ textAlign: 'center' }}>
             <Link
-              href="#"
               sx={{
-                color: theme.palette.text.secondary,
                 textDecoration: 'none',
                 '&:hover': {
                   color: theme.palette.primary.main,
@@ -79,12 +77,13 @@ const Footer = () => {
                 mb: 1,
               }}
             >
-              Privacy Policy
+              Developed By
             </Link>
             <Link
-              href="#"
+              href="https://moinul-alam.github.io"
+              target="_blank"
+              rel="noopener noreferrer"
               sx={{
-                color: theme.palette.text.secondary,
                 textDecoration: 'none',
                 '&:hover': {
                   color: theme.palette.primary.main,
@@ -92,7 +91,7 @@ const Footer = () => {
                 display: 'block',
               }}
             >
-              Terms of Service
+              Moinul Alam
             </Link>
           </Box>
         </Box>
