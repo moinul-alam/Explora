@@ -46,6 +46,7 @@ const MediaDetails = () => {
           sx={{
             flex: '0 0 auto',
             width: { xs: '100%', md: '30%' },
+            margin: 'auto'
           }}
         >
           <img
