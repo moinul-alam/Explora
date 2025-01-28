@@ -3,6 +3,7 @@ import DropdownButton from '@src/components/Header/DropdownButton';
 
 const NavigationMenu = ({ isMobile, onItemClick }) => {
   const moviesItems = [
+    { label: 'Upcoming Movies', link: '/category/movie/upcoming' },
     { label: 'Trending Movies', link: '/category/movie/trending' },
     { label: 'Popular Movies', link: '/category/movie/popular' },
     { label: 'Top Rated Movies', link: '/category/movie/top_rated' },
