@@ -9,12 +9,12 @@ const Footer = () => {
       <Stack
         direction="row"
         justifyContent="space-between"
-        alignItems="center" // Ensures all items are vertically centered in the row
+        alignItems="center" 
         sx={{
           margin: '0 auto',
           width: '100%',
           px: 3,
-          py: 1, // Adds vertical padding to center the content
+          py: 1,
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', flex: 1 }}>
@@ -27,7 +27,7 @@ const Footer = () => {
           sx={{
             display: 'flex',
             justifyContent: 'center',
-            alignItems: 'center', // Ensures logo and text are vertically centered
+            alignItems: 'center',
             flex: 1,
             textAlign: 'center',
           }}
