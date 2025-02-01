@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { IconButton, Box } from '@mui/material';
 import { ArrowForward, ArrowBack } from '@mui/icons-material';
 import MediaCard from '@src/components/Common/MediaCard/MediaCard';
@@ -15,6 +15,7 @@ const MediaShowcase = ({
   spacing = 2,             // spacing between items
 }) => {
   const scrollContainerRef = useRef(null);
+  const [itemWidth, setItemWidth] = useState(0);
 
   // Function to calculate item width based on screen size
   const calculateItemWidth = () => {
@@ -33,6 +34,20 @@ const MediaShowcase = ({
     const availableWidth = container.clientWidth - totalSpacing;
     return Math.floor(availableWidth / itemsToShow);
   };
+
+  // Recalculate item width when data changes or window is resized
+  useEffect(() => {
+    const updateItemWidth = () => {
+      setItemWidth(calculateItemWidth());
+    };
+
+    // Initial calculation
+    updateItemWidth();
+
+    // Recalculate on window resize
+    window.addEventListener('resize', updateItemWidth);
+    return () => window.removeEventListener('resize', updateItemWidth);
+  }, [data]); // Add `data` as a dependency
 
   const scroll = (direction) => {
     const container = scrollContainerRef.current;
@@ -103,7 +118,7 @@ const MediaShowcase = ({
               sx={{
                 flexShrink: 0,
                 scrollSnapAlign: 'start',
-                width: `${calculateItemWidth()}px`,
+                width: `${itemWidth}px`, // Use the calculated item width
                 display: 'flex',
                 justifyContent: 'center',
               }}
