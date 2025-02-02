@@ -8,7 +8,7 @@ import MediaShowcase from "@src/components/Common/MediaShowcase";
 import FallbackImage from "@src/assets/fallback-image.png";
 import { useMediaQuery } from "@mui/material";
 
-const SimilarMediaPage = () => {
+const SentimentAnalysisPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedMedia, setSelectedMedia] = useState(null);
   const [open, setOpen] = useState(false);
@@ -143,4 +143,4 @@ const SimilarMediaPage = () => {
   );
 };
 
-export default SimilarMediaPage;
+export default SentimentAnalysisPage;

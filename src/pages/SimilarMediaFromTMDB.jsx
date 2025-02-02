@@ -121,11 +121,6 @@ const SimilarMediaFromTMDB = () => {
         />
       </Box>
       <Box sx={{ mt: 4 }}>
-        {error && selectedMedia && ( // Show error only after user has selected media
-          <Typography color="error" align="center">
-            {error}
-          </Typography>
-        )}
         {loading && (
           <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
             <CircularProgress />
