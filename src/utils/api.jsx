@@ -1,11 +1,10 @@
+// api.jsx @ src/utils
 import axios from 'axios';
 
+// Create an Axios instance
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
-  withCredentials: true,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  baseURL: import.meta.env.VITE_API_BASE_URL, // Base URL for your backend
+  withCredentials: true, // Include credentials for cross-origin requests
 });
 
 // Request interceptor
@@ -14,10 +13,6 @@ api.interceptors.request.use(
     if (import.meta.env.MODE !== 'production') {
       console.log(`[API Request] ${config.method.toUpperCase()}: ${config.url}`);
     }
-    
-    // Ensure credentials are always included
-    config.withCredentials = true;
-    
     return config;
   },
   (error) => {
@@ -32,14 +27,11 @@ api.interceptors.response.use(
     if (import.meta.env.MODE !== 'production') {
       console.log('[API Response]', response);
     }
-    return response.data;
+    return response.data; // Simplify response to only return data
   },
-  async (error) => {
+  (error) => {
     console.error('[API Response Error]', error.response || error.message);
-    
-    const errResponse = error.response?.data || { 
-      message: 'An unexpected error occurred. Please try again later.' 
-    };
+    const errResponse = error.response?.data || { message: 'An unexpected error occurred. Please try again later.' };
     return Promise.reject(errResponse);
   }
 );
