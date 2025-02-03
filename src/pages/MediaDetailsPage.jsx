@@ -6,6 +6,7 @@ import Credit from '@src/components/MediaDetails/Credit';
 import Trailer from '@src/components/MediaDetails/Trailer';
 import SkeletonLoader from '@src/components/Common/SkeletonLoader';
 import ErrorDisplay from '@src/components/Common/ErrorDisplay';
+import MediaReviews from '@src/components/MediaDetails/MediaReviews';
 import { Box } from '@mui/material';
 
 const MediaDetails = () => {
@@ -74,6 +75,7 @@ const MediaDetails = () => {
             numberOfSeasons={data.seasons}
             numberOfEpisodes={data.episodes}
             imdbId={data.imdb_id}
+            tmdbId={data.tmdb_id}
             mediaId={data._id}
           />
         </Box>
@@ -94,6 +96,16 @@ const MediaDetails = () => {
       >
         <Trailer trailerId={data.trailer_id} />
       </Box>
+
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: { xs: 2, sm: 4 },
+        }}>
+          <MediaReviews  reviews={data.reviews}/>
+      </Box>
+    
     </Box>
   );
 };

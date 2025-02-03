@@ -5,7 +5,7 @@ import { Favorite, FavoriteBorder, Bookmark, BookmarkBorder, Star, StarBorder } 
 import Rating from 'react-rating';
 import api from '@src/utils/api';
 
-const MediaActionBar = ({ mediaId, mediaType, title }) => {
+const MediaActionBar = ({ mediaType, mediaId, tmdbId, title }) => {
   const { user, loading } = useAuth();
   const [isFavorite, setIsFavorite] = useState(false);
   const [isInWatchlist, setIsInWatchlist] = useState(false);
@@ -24,17 +24,18 @@ const MediaActionBar = ({ mediaId, mediaType, title }) => {
 
         // Check favorite status based on media type
         const isFavoriteMedia = mediaType === 'movie' 
-          ? preferences.favoriteMovies?.includes(mediaId)
-          : preferences.favoriteSeries?.includes(mediaId);
+        ? preferences.favoriteMovies?.some(media => media._id.toString() === mediaId)
+        : preferences.favoriteSeries?.some(media => media._id.toString() === mediaId);
+
         setIsFavorite(isFavoriteMedia);
 
         // Check watchlist status
-        const isInWatchlistMedia = preferences.watchlist?.includes(mediaId);
+        const isInWatchlistMedia = preferences.watchlist?.some(media => media._id.toString() === mediaId);
         setIsInWatchlist(isInWatchlistMedia);
 
         // Check for existing review
         const existingReview = reviews?.find(
-          (review) => review.mediaID === mediaId && review.mediaType === mediaType
+          (review) => review.media._id === mediaId && review.media.media_type === mediaType
         );
 
         if (existingReview) {
@@ -117,13 +118,17 @@ const MediaActionBar = ({ mediaId, mediaType, title }) => {
       alert('Please provide a valid rating between 1 and 10.');
       return;
     }
+    
 
     const newReview = {
-      mediaType,
-      mediaID: mediaId,
+      mediaType: mediaType,
+      tmdb_id: tmdbId,
+      mediaId: mediaId,
       rating,
       comment,
     };
+
+    console.log("newReview: ", newReview);
 
     try {
       const response = await api.patch('/user/reviews/update', {

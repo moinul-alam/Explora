@@ -16,9 +16,12 @@ const MediaInfo = ({
   numberOfSeasons,
   numberOfEpisodes,
   imdbId,
+  tmdbId,
   mediaId,
 }) => {
   const navigate = useNavigate();
+
+  // console.log("mediaId: ", mediaId);
   const releaseYear = new Date(releaseDate).getFullYear();
   const formattedReleaseDate = new Date(releaseDate).toLocaleDateString('en-US', {
     day: '2-digit',
@@ -110,7 +113,7 @@ const MediaInfo = ({
           </Typography>
         </Box>
 
-        <MediaActionsBar mediaType={mediaType} mediaId={mediaId} />
+        <MediaActionsBar mediaType={mediaType} mediaId={mediaId} tmdbId={tmdbId} />
 
         {/* Storyline */}
         <Typography
