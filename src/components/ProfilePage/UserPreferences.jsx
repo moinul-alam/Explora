@@ -15,23 +15,22 @@ const UserPreferences = ({ preferences = {} }) => {
         User Preferences
       </Typography>
 
-      {/* Languages */}
+      {/* Languages
       <Box sx={{ marginBottom: 2 }}>
         <Typography variant="subtitle1" gutterBottom>
           Languages:
         </Typography>
         <Typography>{preferences.language?.join(", ") || "None"}</Typography>
-      </Box>
+      </Box> */}
 
       {/* Genres */}
-      <Box sx={{ marginBottom: 2 }}>
+      {/* <Box sx={{ marginBottom: 2 }}>
         <Typography variant="subtitle1" gutterBottom>
           Genres:
         </Typography>
         <Typography>{preferences.genre?.join(", ") || "None"}</Typography>
-      </Box>
+      </Box> */}
 
-      {/* Favorite Movies */}
       <Box sx={{ marginBottom: 2 }}>
         <Typography variant="subtitle1" gutterBottom>
           Favorite Movies:
