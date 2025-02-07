@@ -17,10 +17,10 @@ const NavigationMenu = ({ isMobile, onItemClick }) => {
 
   const exploreItems = [
     { label: 'Find Similar Movies or TV Shows', link: '/explore/similar' },
-    { label: 'Find Similar From TMDB', link: '/explore/similar_from_tmdb' },
     { label: 'Discover Movies and TV Shows', link: '/explore/discover' },
     { label: 'Explore Movie Genres', link: '/explore/genre/movie/list' },
     { label: 'Explore TV Show Genres', link: '/explore/genre/tv/list' },
+    { label: 'Find Similar From TMDB', link: '/explore/similar_from_tmdb' },
   ];
 
   return (
