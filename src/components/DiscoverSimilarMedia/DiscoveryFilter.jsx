@@ -1,23 +1,23 @@
 const GENRES = [
-  { label: "Action", value: 28 },
-  { label: "Adventure", value: 12 },
-  { label: "Animation", value: 16 },
-  { label: "Comedy", value: 35 },
-  { label: "Crime", value: 80 },
-  { label: "Documentary", value: 99 },
-  { label: "Drama", value: 18 },
-  { label: "Family", value: 10751 },
-  { label: "Fantasy", value: 14 },
-  { label: "History", value: 36 },
-  { label: "Horror", value: 27 },
-  { label: "Music", value: 10402 },
-  { label: "Mystery", value: 9648 },
-  { label: "Romance", value: 10749 },
-  { label: "Science Fiction", value: 878 },
-  { label: "TV Movie", value: 10770 },
-  { label: "Thriller", value: 53 },
-  { label: "War", value: 10752 },
-  { label: "Western", value: 37 },
+  { label: "Action", value: "action" },
+  { label: "Adventure", value: "adventure" },
+  { label: "Animation", value: "animation" },
+  { label: "Comedy", value: "comedy" },
+  { label: "Crime", value: "crime" },
+  { label: "Documentary", value: "documentary" },
+  { label: "Drama", value: "drama" },
+  { label: "Family", value: "family" },
+  { label: "Fantasy", value: "fantasy" },
+  { label: "History", value: "history" },
+  { label: "Horror", value: "horror" },
+  { label: "Music", value: "music" },
+  { label: "Mystery", value: "mystery" },
+  { label: "Romance", value: "romance" },
+  { label: "Science Fiction", value: "science fiction" },
+  { label: "TV Movie", value: "tv movie" },
+  { label: "Thriller", value: "thriller" },
+  { label: "War", value: "war" },
+  { label: "Western", value: "western" },
 ];
 
 const LANGUAGES = [
@@ -28,40 +28,36 @@ const LANGUAGES = [
 ];
 
 const VALID_FILTERS = {
-  with_genres: {
+  genres: {
     type: "string",
     options: GENRES,
     label: "Include Genres",
   },
-  language: {
+  spoken_languages: {
     type: "string",
     options: LANGUAGES,
     label: "Language",
   },
-  "vote_average.gte": {
+  "vote_average": {
     type: "number",
     options: Array.from({ length: 10 }, (_, i) => i + 1),
     label: "Minimum Rating",
   },
-  "vote_average.lte": {
-    type: "number",
-    options: Array.from({ length: 10 }, (_, i) => i + 1),
-    label: "Maximum Rating",
+  keywords: {
+    type: "string",
+    placeholder: "Keywords",
+    label: "Keywords"
   },
-  with_keywords: { 
-    type: "string", 
-    placeholder: "Keywords", 
-    label: "Keywords" },
-  with_cast: {
+  cast: {
     type: "search",
     label: "Actor",
     placeholder: "Search Actor...",
   },
-  with_crew: {
+  director: {
     type: "search",
     label: "Director",
     placeholder: "Search Director...",
   },
 };
 
-export default VALID_FILTERS
+export default VALID_FILTERS;

@@ -4,6 +4,7 @@ import DiscoveryRequest from "@src/components/MediaDiscovery/DiscoveryRequest";
 import DiscoveryShowcase from "@src/components/MediaDiscovery/DiscoveryShowcase";
 import VALID_FILTERS from "@src/components/MediaDiscovery/DiscoveryFilter";
 
+
 const MediaDiscoveryPage = () => {
   const [mediaType, setMediaType] = useState("");
   const [filters, setFilters] = useState(
