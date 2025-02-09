@@ -14,7 +14,8 @@ import ProfilePage from '@src/pages/ProfilePage';
 import AboutPage from '@src/pages/AboutPage';
 import SimilarMediaPage from '@src/pages/SimilarMediaPage';
 import SimilarMediaFromTMDB from '@src/pages/SimilarMediaFromTMDB';
-import DiscoverSimilarMediaPage from './pages/DiscoverSimilarMediaPage';
+import DiscoverSimilarMediaPage from '@src/pages/DiscoverSimilarMediaPage';
+import ExploraChat from '@src/pages/ExploraChat';
 
 const AppRoutes = () => (
   <Routes>
@@ -26,6 +27,7 @@ const AppRoutes = () => (
         </Suspense>
       }
     />
+    <Route path='/recommendation' element={<ExploraChat />} />
     <Route path='/explore/discover' element={<DiscoverSimilarMediaPage />} />
     <Route path='/explore/genre/:mediaType/list' element={<GenreListPage />} />
     <Route path='/explore/:genreName/:mediaType/' element={<GenreDetailsPage />} />
