@@ -45,6 +45,8 @@ const ExploraChat = () => {
       : null
   );
 
+  console.log('genreData:', genreData);
+
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
