@@ -12,7 +12,7 @@ const DropdownButton = ({ label, items, onItemClick }) => {
 
   const handleItemClick = (item) => {
     if (onItemClick) {
-      onItemClick(item); // Invoke the callback with the clicked item
+      onItemClick(item);
     }
 
     if (item.label === 'Logout') {
@@ -70,7 +70,11 @@ const DropdownButton = ({ label, items, onItemClick }) => {
           <MenuItem
             key={index}
             onClick={() => handleItemClick(item)}
-            component="button"
+            component={item.link ? "a" : "button"}
+            href={item.link || undefined}
+            target={item.link ? "_self" : undefined}
+            rel={item.link ? "noopener noreferrer" : undefined}
+            sx={{ textDecoration: "none", color: "inherit" }}
           >
             {item.label}
           </MenuItem>

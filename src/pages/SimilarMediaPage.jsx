@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import useMediaSearch from "@src/hooks/useMediaSearch";
 import useFetchData from "@src/hooks/useFetchData";
 import MediaShowcase from "@src/components/Common/MediaShowcase";
+import MediaCard from "@src/components/Common/MediaCard/MediaCard";
 import FallbackImage from "@src/assets/fallback-image.png";
 import { useMediaQuery } from "@mui/material";
 
@@ -16,11 +17,10 @@ const SimilarMediaPage = () => {
   const searchResults = useMediaSearch(searchQuery);
   const isMobile = useMediaQuery("(max-width:600px)");
 
-  // Fetch similar media using useFetchData
-  const { data: similarMedia, loading, error } = useFetchData(
-    selectedMedia
-      ? `recommender/${selectedMedia.mediaType}/${selectedMedia.id}/similar`
-      : null,
+  // Fetch similar media only when valid media is selected
+  const shouldFetch = selectedMedia?.mediaType && selectedMedia?.id;
+  const { data: similarMedia, loading } = useFetchData(
+    shouldFetch ? `recommender/${selectedMedia.mediaType}/${selectedMedia.id}/similar` : null,
     {},
     [selectedMedia]
   );
@@ -35,18 +35,16 @@ const SimilarMediaPage = () => {
 
   const handleSelect = (event, value) => {
     if (value) {
-      setSelectedMedia(value); // Store selected media for fetching similar content
+      setSelectedMedia(value);
       setOpen(false);
       setSearchQuery(value.title || "");
     }
   };
 
   const handleMediaClick = (media) => {
-    // Check if mediaType exists in `media`; otherwise, fallback to the selectedMedia's mediaType
     const mediaType = media.mediaType || selectedMedia?.mediaType;
     if (mediaType) {
-      const route = `/details/${mediaType}/${media.id}`;
-      navigate(route); // Navigate to media details page
+      navigate(`/details/${mediaType}/${media.id}`);
     } else {
       console.error("Media type is missing. Cannot navigate to details.");
     }
@@ -59,6 +57,7 @@ const SimilarMediaPage = () => {
           Search for Similar Movies or TV Shows
         </Typography>
       </Box>
+
       <Box sx={{ width: "20rem", mx: "auto", mb: 2 }}>
         <Autocomplete
           open={open}
@@ -66,7 +65,9 @@ const SimilarMediaPage = () => {
           onClose={() => setOpen(false)}
           freeSolo
           options={searchResults}
-          getOptionLabel={(option) => (typeof option === "string" ? option : option.title || "")}
+          getOptionLabel={(option) =>
+            typeof option === "string" ? option : `${option.title} (${option.mediaType || "unknown"})`
+          }
           onInputChange={(event, newInputValue) => setSearchQuery(newInputValue)}
           onChange={handleSelect}
           noOptionsText={searchQuery.trim() ? "No Results Found" : "Type to search"}
@@ -74,27 +75,12 @@ const SimilarMediaPage = () => {
             <Box component="li" {...props}>
               <Box sx={{ display: "flex", alignItems: "center", width: "100%" }}>
                 <img
-                  src={
-                    option.poster_path
-                      ? `https://image.tmdb.org/t/p/w45${option.poster_path}`
-                      : FallbackImage
-                  }
+                  src={option.poster_path ? `https://image.tmdb.org/t/p/w92${option.poster_path}` : FallbackImage}
                   alt={option.title}
-                  style={{
-                    marginRight: 10,
-                    width: 40,
-                    height: 60,
-                    objectFit: "cover",
-                  }}
+                  loading="lazy"
+                  style={{ marginRight: 10, width: 40, height: 60, objectFit: "cover" }}
                 />
-                <Box
-                  sx={{
-                    flexGrow: 1,
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                  }}
-                >
+                <Box sx={{ flexGrow: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                   {option.title}
                 </Box>
               </Box>
@@ -104,7 +90,7 @@ const SimilarMediaPage = () => {
             <TextField
               {...params}
               variant="outlined"
-              placeholder={isMobile ? "Search..." : "Search Movies, TV Shows, People and more"}
+              placeholder={isMobile ? "Search..." : "Search Movies and TV Shows"}
               size="small"
               fullWidth
               onKeyDown={handleKeyDown}
@@ -120,25 +106,52 @@ const SimilarMediaPage = () => {
           )}
         />
       </Box>
-      <Box sx={{ mt: 4 }}>
-        {loading && (
-          <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-            <CircularProgress />
-          </Box>
-        )}
-        {similarMedia && similarMedia.length > 0 && (
-          <MediaShowcase
-            data={similarMedia.map((item) => ({
-              ...item,
-              mediaType: item.mediaType || selectedMedia.mediaType,
-            }))}
-            onCardClick={handleMediaClick}
-          />
-        )}
-        {similarMedia && similarMedia.length === 0 && (
-          <Typography align="center">No similar media found.</Typography>
-        )}
+
+      <Box
+  sx={{
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "flex-start",
+    gap: 4,
+    width: "100%",
+    maxWidth: "1200px",
+    mx: "auto",
+    mt: 3,
+  }}
+>
+  {/* Selected Media (1/5 width) */}
+  {selectedMedia && (
+    <Box sx={{ flex: "1 1 20%", minWidth: "200px", maxWidth: "250px" }}>
+      <MediaCard mediaData={selectedMedia} onClick={() => handleMediaClick(selectedMedia)} />
+    </Box>
+  )}
+
+  {/* Similar Media Showcase (4/5 width) */}
+  <Box sx={{ flex: "4 1 80%", minWidth: "400px" }}>
+    {loading && (
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+        <CircularProgress />
       </Box>
+    )}
+    {similarMedia && similarMedia.length > 0 && (
+      <MediaShowcase
+      data={similarMedia.map((item) => ({
+        ...item,
+        mediaType: item.mediaType || selectedMedia.mediaType,
+      }))}
+      onCardClick={handleMediaClick}
+      customItemsPerView={{
+        xs: 1,  // 1 item on mobile
+        sm: 2,  // 2 items on tablet
+        md: 3,  // 3 items on desktop and up
+        lg: 3
+      }}
+    />
+    )}
+    {similarMedia && similarMedia.length === 0 && <Typography align="center">No similar media found.</Typography>}
+  </Box>
+</Box>
+
     </>
   );
 };

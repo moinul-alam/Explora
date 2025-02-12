@@ -6,19 +6,25 @@ import MediaCard from '@src/components/Common/MediaCard/MediaCard';
 const MediaShowcase = ({
   data = [],
   onCardClick,
-  itemsPerView = {
-    xs: 1,    // mobile
-    sm: 2,    // tablet
-    md: 4,    // small desktop
-    lg: 5,    // large desktop
+  // New prop for custom items per view configuration
+  customItemsPerView,
+  // Default values as fallback
+  defaultItemsPerView = {
+    xs: 1,
+    sm: 2,
+    md: 4,
+    lg: 5,
   },
-  spacing = 2, // spacing between items
+  spacing = 2
 }) => {
   const scrollContainerRef = useRef(null);
   const [itemWidth, setItemWidth] = useState(0);
   const [showLeftButton, setShowLeftButton] = useState(false);
   const [showRightButton, setShowRightButton] = useState(false);
-  const [itemsToShow, setItemsToShow] = useState(itemsPerView.xs);
+  const [itemsToShow, setItemsToShow] = useState(defaultItemsPerView.xs);
+
+  // Use custom configuration if provided, otherwise use defaults
+  const itemsPerView = customItemsPerView || defaultItemsPerView;
 
   // Calculate the number of items to show based on screen size
   useEffect(() => {

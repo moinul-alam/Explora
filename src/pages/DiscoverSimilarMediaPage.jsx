@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Container,
   Typography,
@@ -34,6 +35,7 @@ const DiscoverSimilarMediaPage = () => {
   const [voteAverage, setVoteAverage] = useState('');
   const [keywords, setKeywords] = useState('');
   const [releaseYear, setReleaseYear] = useState('');
+  const navigate = useNavigate();
   
   // Search state
   const [actorSearchQuery, setActorSearchQuery] = useState('');
@@ -89,11 +91,9 @@ const DiscoverSimilarMediaPage = () => {
   };
 
   const handleMediaClick = (media) => {
-    // Check if mediaType exists in `media`; otherwise, fallback to the selectedMedia's mediaType
     const mediaType = media.mediaType || selectedMedia?.mediaType;
     if (mediaType) {
-      const route = `/details/${mediaType}/${media.id}`;
-      navigate(route); 
+      navigate(`/details/${mediaType}/${media.id}`);
     } else {
       console.error("Media type is missing. Cannot navigate to details.");
     }
