@@ -211,12 +211,17 @@ const ExploraChat = () => {
 
   const handleGetRecommendations = async () => {
     try {
-      const ratedMoviesMap = ratedMovies.reduce((acc, movie) => {
+      const ratings = ratedMovies.reduce((acc, movie) => {
         acc[movie.tmdb_id] = movie.rating;
         return acc;
       }, {});
   
-      const response = await api.post(`recommender/recommendations`, ratedMoviesMap);
+      const payload = {
+        mediaType: selectedMediaType,
+        ratings: ratings
+      };
+  
+      const response = await api.post(`recommender/collaborative/recommendations`, payload);
       const recommendations = response.data;
       setRecommendedMovies(recommendations);
       setPreviousStep('rating');
