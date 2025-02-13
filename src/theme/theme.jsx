@@ -232,15 +232,6 @@ const theme = (mode) => {
     shape: {
       borderRadius: 12,
     },
-    shadows: [
-      'none',
-      mode === 'light'
-        ? '0 2px 4px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.08)'
-        : '0 2px 4px rgba(255,255,255,0.02), 0 1px 2px rgba(255,255,255,0.04)',
-      mode === 'light'
-        ? '0px 10px 20px rgba(0, 0, 0, 0.25)'
-        : '0px 10px 20px rgba(0, 0, 0, 0.45)',
-    ],
     transitions: {
       duration: {
         shortest: 150,

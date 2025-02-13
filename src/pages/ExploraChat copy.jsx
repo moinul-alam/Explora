@@ -11,9 +11,11 @@ import {
   CircularProgress
 } from '@mui/material';
 import { 
+  Favorite, 
   Send, 
   ChevronRight, 
-  Bookmark
+  Bookmark,
+  FavoriteBorder 
 } from '@mui/icons-material';
 import MediaCard from '@src/components/Common/MediaCard/MediaCard';
 import api from "@src/utils/api";
@@ -25,25 +27,25 @@ const ExploraChat = () => {
   const [messages, setMessages] = useState([
     { sender: 'system', content: 'Greetings, what do you like to watch?' }
   ]);
-  const [previousMessages, setPreviousMessages] = useState([]);
   const [selectedMediaType, setSelectedMediaType] = useState('');
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [currentStep, setCurrentStep] = useState('mediaType-selection');
-  const [previousStep, setPreviousStep] = useState(null);
-  const [availableMovies, setAvailableMovies] = useState([]);
   const [ratedMovies, setRatedMovies] = useState([]);
+  const [availableMovies, setAvailableMovies] = useState([]);
   const [currentMovieIndex, setCurrentMovieIndex] = useState(0);
   const [recommendedMovies, setRecommendedMovies] = useState([]);
   const [currentRecommendationIndex, setCurrentRecommendationIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [currentRating, setCurrentRating] = useState(0);
   const chatEndRef = useRef(null);
 
-  const { data: genreList, loading: genreLoading } = useFetchData(
-    selectedMediaType && currentStep === 'genre-selection'
-      ? `/media/genre/${selectedMediaType}/list`
+  // Only fetch genres when media type is selected AND we're in genre-selection step
+  const { data: genreData, loading: genreLoading } = useFetchData(
+    selectedMediaType && currentStep === 'genre-selection' 
+      ? `/media/genre/${selectedMediaType}/list` 
       : null
   );
+
+  console.log('genreData:', genreData);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -51,19 +53,17 @@ const ExploraChat = () => {
 
   const handleMediaTypeSelect = (mediaType) => {
     setSelectedMediaType(mediaType);
-    setSelectedGenres([]);
+    setSelectedGenres([]); // Reset selected genres when media type changes
   };
 
   const handleMediaTypeSubmit = async () => {
     if (!selectedMediaType) return;
 
-    setPreviousMessages([...messages]);
     setMessages([
       ...messages,
       { sender: 'user', content: `I prefer watching ${selectedMediaType}s` },
       { sender: 'system', content: 'Which genres do you like most?' }
     ]);
-    setPreviousStep('mediaType-selection');
     setCurrentStep('genre-selection');
   };
 
@@ -77,35 +77,36 @@ const ExploraChat = () => {
 
   const handleGenreSubmit = async () => {
     if (selectedGenres.length === 0) return;
-  
-    setPreviousMessages([...messages]);
+
     setMessages([
       ...messages,
       { sender: 'user', content: selectedGenres.map(g => g.name).join(', ') },
       { sender: 'system', content: 'Thinking...' }
     ]);
-  
+
     setIsLoading(true);
     try {
-      const genreId = selectedGenres.map(g => g.id).join(',');
-      const fetchGenreURL = `/media/discover/${selectedMediaType}?with_genres=${genreId}`;
-  
+      const genreIds = selectedGenres.map(g => g.id).join(',');
+      const fetchGenreURL = `/media/discover/${selectedMediaType}?with_genres=${genreIds}`;
       const response = await api.get(fetchGenreURL);
-  
-      if (response.status === 'success' && response.data.length > 0) {
-        const movies = response.data;
+      
+      // Check if we have a successful response with data
+      if (response.data.status === 'success' && Array.isArray(response.data.data)) {
+        const movies = response.data.data;
         
+        if (movies.length === 0) {
+          throw new Error('No movies found');
+        }
+
         setAvailableMovies(movies);
-  
+
         setCurrentMovieIndex(0);
-        setPreviousMessages([...messages]);
         setMessages(messages => messages.slice(0, -1).concat(
           { sender: 'system', content: `Rate this ${selectedMediaType} please` }
         ));
-        setPreviousStep('genre-selection');
         setCurrentStep('rating');
       } else {
-        throw new Error('No valid movie data');
+        throw new Error('Invalid response format');
       }
     } catch (error) {
       console.error('Error fetching content:', error);
@@ -117,71 +118,45 @@ const ExploraChat = () => {
     setIsLoading(false);
   };
 
-  const handleRating = async () => {
-    const movie = availableMovies[currentMovieIndex];
-    const updatedRatedMovies = [...ratedMovies, { tmdb_id: movie.id, rating: currentRating }];
-    console.log('Rated movies:', updatedRatedMovies);
+  const handleRating = async (movie, rating, liked = false) => {
+    const updatedRatedMovies = [...ratedMovies, { ...movie, rating, liked }];
     setRatedMovies(updatedRatedMovies);
-    setCurrentRating(0);
-  
-    setMessages([
-      ...messages,
-      { 
-        sender: 'user', 
-        content: `Rated ${movie.title}: ${currentRating} stars`
-      },
-      { sender: 'system', content: 'Rate this movie please' }
-    ]);
-    setCurrentMovieIndex(prevIndex => prevIndex + 1);
-  };
 
-  // const handleRating = async () => {
-  //   const movie = availableMovies[currentMovieIndex];
-  //   const updatedRatedMovies = [...ratedMovies, { tmdb_id: movie.id, rating: currentRating }];
-  //   console.log('Rated movies:', updatedRatedMovies);
-  //   setRatedMovies(updatedRatedMovies);
-  //   setCurrentRating(0);
-  
-  //   if (updatedRatedMovies.length >= 5) {
-  //     setPreviousMessages([...messages]);
-  //     setMessages([
-  //       ...messages,
-  //       { 
-  //         sender: 'user', 
-  //         content: `Rated ${movie.title}: ${currentRating} stars`
-  //       },
-  //       { sender: 'system', content: 'Thinking...' }
-  //     ]);
-  
-  //     try {
-  //       const ratedMoviesMap = updatedRatedMovies.reduce((acc, movie) => {
-  //         acc[movie.id] = movie.rating;
-  //         return acc;
-  //       }, {});
-  
-  //       const response = await api.post(`recommender/recommendations`, ratedMoviesMap);
-  //       const recommendations = response.data;
-  //       setRecommendedMovies(recommendations);
-  //       setPreviousStep('rating');
-  //       setCurrentStep('recommendations');
-  //       setMessages(messages => messages.slice(0, -1).concat(
-  //         { sender: 'system', content: 'Based on your ratings, you might enjoy these movies:' }
-  //       ));
-  //     } catch (error) {
-  //       console.error('Error getting recommendations:', error);
-  //     }
-  //   } else {
-  //     setMessages([
-  //       ...messages,
-  //       { 
-  //         sender: 'user', 
-  //         content: `Rated ${movie.title}: ${currentRating} stars`
-  //       },
-  //       { sender: 'system', content: 'Rate this movie please' }
-  //     ]);
-  //     setCurrentMovieIndex(prevIndex => prevIndex + 1);
-  //   }
-  // };
+    if (updatedRatedMovies.length >= 5) {
+      setMessages([
+        ...messages,
+        { 
+          sender: 'user', 
+          content: `Rated ${movie.title}: ${rating} stars${liked ? ' ❤️' : ''}`
+        },
+        { sender: 'system', content: 'Thinking...' }
+      ]);
+
+      try {
+        const response = await api.post(`recommender/recommendations`, {
+          updatedRatedMovies
+        });
+        const recommendations = response.data;
+        setRecommendedMovies(recommendations);
+        setCurrentStep('recommendations');
+        setMessages(messages => messages.slice(0, -1).concat(
+          { sender: 'system', content: 'Based on your ratings, you might enjoy these movies:' }
+        ));
+      } catch (error) {
+        console.error('Error getting recommendations:', error);
+      }
+    } else {
+      setMessages([
+        ...messages,
+        { 
+          sender: 'user', 
+          content: `Rated ${movie.title}: ${rating} stars${liked ? ' ❤️' : ''}`
+        },
+        { sender: 'system', content: 'Rate this movie please' }
+      ]);
+      setCurrentMovieIndex(prevIndex => prevIndex + 1);
+    }
+  };
 
   const handleHaventWatched = () => {
     const currentMovie = availableMovies[currentMovieIndex];
@@ -191,7 +166,6 @@ const ExploraChat = () => {
       { sender: 'system', content: 'Rate this movie please' }
     ]);
     setCurrentMovieIndex(prevIndex => prevIndex + 1);
-    setCurrentRating(0); // Reset the rating component
   };
 
   const handleNextRecommendation = () => {
@@ -204,31 +178,6 @@ const ExploraChat = () => {
     alert('Please register to save to watchlist');
   };
 
-  const handlePreviousStep = () => {
-    setMessages(previousMessages);
-    setCurrentStep(previousStep);
-  };
-
-  const handleGetRecommendations = async () => {
-    try {
-      const ratedMoviesMap = ratedMovies.reduce((acc, movie) => {
-        acc[movie.tmdb_id] = movie.rating;
-        return acc;
-      }, {});
-  
-      const response = await api.post(`recommender/recommendations`, ratedMoviesMap);
-      const recommendations = response.data;
-      setRecommendedMovies(recommendations);
-      setPreviousStep('rating');
-      setCurrentStep('recommendations');
-      setMessages(messages => messages.slice(0, -1).concat(
-        { sender: 'system', content: 'Based on your ratings, you might enjoy these movies:' }
-      ));
-    } catch (error) {
-      console.error('Error getting recommendations:', error);
-    }
-  };
-  
   const renderMessage = (message, index) => (
     <Box
       key={index}
@@ -243,7 +192,7 @@ const ExploraChat = () => {
         sx={{
           p: 2,
           maxWidth: '70%',
-          bgcolor: message.sender === 'user' ? 'error.dark' : 'background.secondary',
+          bgcolor: message.sender === 'user' ? 'primary.light' : 'background.warning',
           borderRadius: 2
         }}
       >
@@ -277,7 +226,7 @@ const ExploraChat = () => {
             </IconButton>
           </Box>
         );
-  
+
       case 'genre-selection':
         return (
           <Box sx={{ mt: 2 }}>
@@ -285,7 +234,7 @@ const ExploraChat = () => {
               <CircularProgress size={24} />
             ) : (
               <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                {genreList?.genres.map((genre) => (
+                {genreData?.genres.map((genre) => (
                   <Chip
                     key={genre.id}
                     label={genre.name}
@@ -303,18 +252,9 @@ const ExploraChat = () => {
             >
               <Send />
             </IconButton>
-            {previousStep && (
-              <Button 
-                variant="outlined" 
-                onClick={handlePreviousStep}
-                sx={{ mt: 2 }}
-              >
-                Previous step
-              </Button>
-            )}
           </Box>
         );
-  
+
       case 'rating':
         if (isLoading) {
           return <CircularProgress />;
@@ -327,53 +267,29 @@ const ExploraChat = () => {
             </Typography>
           );
         }
-  
+
         const currentMovie = availableMovies[currentMovieIndex];
         return (
-          <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <Box sx={{ mt: 2 }}>
             <MediaCard mediaData={currentMovie} />
             <Stack direction="row" spacing={2} alignItems="center" sx={{ mt: 2 }}>
+              <IconButton onClick={() => handleRating(currentMovie, 0, true)}>
+                <Favorite color="error" />
+              </IconButton>
               <Rating
-                value={currentRating}
-                onChange={(_, value) => setCurrentRating(value)}
+                onChange={(_, value) => handleRating(currentMovie, value)}
                 size="large"
               />
-              <Button 
-                variant="contained" 
-                onClick={handleRating}
-                sx={{ ml: 2 }}
-              >
-                Submit
-              </Button>
-            </Stack>
-            <Stack direction="row" spacing={2} alignItems="center" sx={{ mt: 2 }}>
               <Button 
                 variant="outlined" 
                 onClick={handleHaventWatched}
               >
                 Haven't watched
               </Button>
-              {previousStep && (
-                <Button 
-                  variant="outlined" 
-                  onClick={handlePreviousStep}
-                >
-                  Previous step
-                </Button>
-              )}
             </Stack>
-            {ratedMovies.length >= 5 && (
-              <Button 
-                variant="contained" 
-                onClick={handleGetRecommendations}
-                sx={{ mt: 2 }}
-              >
-                Get Recommendations
-              </Button>
-            )}
           </Box>
         );
-  
+
       case 'recommendations':
         return (
           <Box sx={{ mt: 2 }}>
@@ -407,28 +323,20 @@ const ExploraChat = () => {
             >
               Show next
             </Button>
-            {previousStep && (
-              <Button 
-                variant="outlined" 
-                onClick={handlePreviousStep}
-                sx={{ mt: 2 }}
-              >
-                Previous step
-              </Button>
-            )}
           </Box>
         );
-  
+
       default:
         return null;
     }
   };
-  
+
   return (
     <Box sx={{ 
       maxWidth: '800px', 
       margin: '0 auto', 
       p: 2,
+      height: '100vh',
       display: 'flex',
       flexDirection: 'column'
     }}>
