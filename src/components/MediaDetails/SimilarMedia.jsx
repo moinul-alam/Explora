@@ -5,7 +5,7 @@ import SkeletonLoader from '@src/components/Common/SkeletonLoader';
 import ErrorDisplay from '@src/components/Common/ErrorDisplay';
 
 const SimilarMedia = ( mediaType, mediaId ) => {
-  const { data, loading, error } = useFetchData(`/media/${mediaType}/${mediaId}/similar`);
+  const { data, loading, error } = useFetchData(`/recommender/${mediaType}/${mediaId}/similar`);
   const navigate = useNavigate();
 
   const handleCardClick = (mediaId) => {
