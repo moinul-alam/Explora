@@ -192,7 +192,7 @@ const ExploraChat = () => {
     } catch (error) {
       console.error('Error getting recommendations:', error);
       setMessages(messages => messages.concat(
-        { sender: 'system', content: 'Sorry, I had trouble getting recommendations. Please try rating more content.' }
+        { sender: 'system', content: 'Sorry, the recommender is currently unavailable, try again later.' }
       ));
     }
     setIsLoading(false);
