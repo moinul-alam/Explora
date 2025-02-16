@@ -13,7 +13,7 @@ const RecommenderPage = () => {
         {/* Find Similar Movie */}
         <Grid item xs={12} sm={6} md={4}>
           <a
-            href="http://localhost:5173/explore/similar"
+            href="/explore/similar"
             target="_blank"
             rel="noopener noreferrer"
             style={{ textDecoration: 'none' }}
@@ -32,7 +32,7 @@ const RecommenderPage = () => {
         {/* Find A Movie */}
         <Grid item xs={12} sm={6} md={4}>
           <a
-            href="http://localhost:5173/explore/discover"
+            href="/explore/discover"
             target="_blank"
             rel="noopener noreferrer"
             style={{ textDecoration: 'none' }}
@@ -52,7 +52,7 @@ const RecommenderPage = () => {
         {/* Chat and Get Recommendations */}
         <Grid item xs={12} sm={6} md={4}>
           <a
-            href="http://localhost:5173/chat_recommender"
+            href="/chat_recommender"
             target="_blank"
             rel="noopener noreferrer"
             style={{ textDecoration: 'none' }}
@@ -72,7 +72,7 @@ const RecommenderPage = () => {
         {/* Search, Rate and Get Recommendations */}
         <Grid item xs={12} sm={6} md={4}>
           <a
-            href="http://localhost:5173/rating_recommender"
+            href="/rating_recommender"
             target="_blank"
             rel="noopener noreferrer"
             style={{ textDecoration: 'none' }}
