@@ -29,7 +29,6 @@ const RecommenderPage = () => {
             </Button>
           </a>
         </Grid>
-
         {/* Find A Movie */}
         <Grid item xs={12} sm={6} md={4}>
           <a
