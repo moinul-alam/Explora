@@ -6,7 +6,7 @@ import ErrorDisplay from "@src/components/Common/ErrorDisplay";
 import HeroText from "@src/components/HeroSlider/HeroText";
 
 const HeroSlider = () => {
-  const { data: movies, loading, error } = useFetchData("/media/category/movie/trending");
+  const { data: mediaData, loading, error } = useFetchData("/media/category/movie/trending");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [effect, setEffect] = useState("zoomIn");
 
@@ -16,15 +16,15 @@ const HeroSlider = () => {
   const effects = ["zoomIn", "fade", "scale", "rotate"];
 
   useEffect(() => {
-    if (movies?.length) {
+    if (mediaData?.length) {
       const interval = setInterval(() => {
-        setCurrentIndex((prev) => (prev + 1) % movies.length);
+        setCurrentIndex((prev) => (prev + 1) % mediaData.length);
         setEffect(effects[Math.floor(Math.random() * effects.length)]);
       }, autoEffectInterval);
 
       return () => clearInterval(interval);
     }
-  }, [movies]);
+  }, [mediaData]);
 
   if (loading) return <SkeletonLoader type="hero" />;
   if (error) return <ErrorDisplay message={error.message} />;
@@ -39,7 +39,7 @@ const HeroSlider = () => {
       }}
     >
       {/* Display Current Slide */}
-      {movies.map((movie, index) => (
+      {mediaData.map((movie, index) => (
         <Box
           key={movie.id}
           sx={{

@@ -3,13 +3,12 @@ import RatingBadge from '@src/components/Common/MediaCard/RatingBadge';
 import YearBadge from '@src/components/Common/MediaCard/YearBadge';
 import MediaOverview from '@src/components/Common/MediaCard/MediaOverview';
 
-const MediaCard = ({ mediaData, onClick }) => {
+const MediaCard = ({ mediaData }) => {
   const { title, name, poster_path, overview, vote_average, release_date, first_air_date } = mediaData;
   const displayTitle = title || name;
 
   return (
     <Box
-      onClick={onClick}
       sx={{
         position: 'relative',
         width: { xs: '10rem', sm: '12.5rem', md: '15rem' },

@@ -1,32 +1,30 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
-import { IconButton, Box } from '@mui/material';
+import { Link } from 'react-router-dom';
+import { IconButton, Box, useTheme } from '@mui/material';
 import { ArrowForward, ArrowBack } from '@mui/icons-material';
 import MediaCard from '@src/components/Common/MediaCard/MediaCard';
 
 const MediaShowcase = ({
   data = [],
-  onCardClick,
-  // New prop for custom items per view configuration
+  detailsLink,
   customItemsPerView,
-  // Default values as fallback
   defaultItemsPerView = {
     xs: 1,
     sm: 2,
     md: 4,
     lg: 5,
   },
-  spacing = 2
+  spacing = 2,
 }) => {
+  const theme = useTheme();
   const scrollContainerRef = useRef(null);
   const [itemWidth, setItemWidth] = useState(0);
   const [showLeftButton, setShowLeftButton] = useState(false);
   const [showRightButton, setShowRightButton] = useState(false);
   const [itemsToShow, setItemsToShow] = useState(defaultItemsPerView.xs);
 
-  // Use custom configuration if provided, otherwise use defaults
   const itemsPerView = customItemsPerView || defaultItemsPerView;
 
-  // Calculate the number of items to show based on screen size
   useEffect(() => {
     const handleResize = () => {
       const viewportWidth = window.innerWidth;
@@ -36,22 +34,22 @@ const MediaShowcase = ({
       else setItemsToShow(itemsPerView.lg);
     };
 
-    handleResize(); // Initial calculation
+    handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [itemsPerView]);
 
-  // Calculate the width of each item based on the number of items to show
   const calculateItemWidth = useCallback(() => {
     const container = scrollContainerRef.current;
     if (!container) return 0;
+  
+    const availableWidth = container.clientWidth;
+    const totalSpacing = (itemsToShow - 1) * theme.spacing(spacing);
+  
+    return Math.floor((availableWidth - totalSpacing) / itemsToShow);
+  }, [itemsToShow, spacing, theme]);
+  
 
-    const totalSpacing = (itemsToShow - 1) * (spacing * 8); // Convert spacing to pixels
-    const availableWidth = container.clientWidth - totalSpacing;
-    return Math.floor(availableWidth / itemsToShow);
-  }, [itemsToShow, spacing]);
-
-  // Update item width when the container size changes
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
@@ -64,7 +62,6 @@ const MediaShowcase = ({
     return () => resizeObserver.disconnect();
   }, [calculateItemWidth]);
 
-  // Handle scrolling
   const scroll = useCallback((direction) => {
     const container = scrollContainerRef.current;
     if (container) {
@@ -73,7 +70,6 @@ const MediaShowcase = ({
     }
   }, []);
 
-  // Update scroll button visibility
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
@@ -85,12 +81,11 @@ const MediaShowcase = ({
       );
     };
 
-    handleScroll(); // Initial check
+    handleScroll();
     container.addEventListener('scroll', handleScroll);
     return () => container.removeEventListener('scroll', handleScroll);
   }, [data]);
 
-  // Add keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'ArrowLeft' && showLeftButton) {
@@ -105,18 +100,29 @@ const MediaShowcase = ({
   }, [showLeftButton, showRightButton, scroll]);
 
   return (
-    <Box sx={{ position: 'relative', width: '100%' }}>
-      {/* Main container */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: spacing }}>
-        {/* Left scroll button (visible on desktop) */}
+    <Box>
+      {/* Showcase Container */}
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          backgroundColor: 'background.paper',
+          borderRadius: '8px',
+          boxShadow: theme.shadows[1],
+        }}
+      >
+        {/* Left scroll button */}
         <IconButton
           onClick={() => scroll('left')}
           disabled={!showLeftButton}
           aria-label="Scroll left"
-          sx={{ 
+          sx={{
             display: { xs: 'none', md: 'flex' },
             padding: 1,
             visibility: showLeftButton ? 'visible' : 'hidden',
+            backgroundColor: 'primary.main',
+            color: 'white',
+            '&:hover': { backgroundColor: 'primary.dark' },
           }}
         >
           <ArrowBack />
@@ -152,32 +158,37 @@ const MediaShowcase = ({
                 width: `${itemWidth}px`,
                 display: 'flex',
                 justifyContent: 'center',
+                borderRadius: '4px',
+                boxShadow: theme.shadows[1],
+                '&:hover': { boxShadow: theme.shadows[4] },
               }}
             >
-              <MediaCard
-                mediaData={media}
-                onClick={() => onCardClick(media)}
-              />
+              <Link to={detailsLink(media)} style={{ textDecoration: 'none', color: 'inherit'}}>
+                <MediaCard mediaData={media} />
+              </Link>
             </Box>
           ))}
         </Box>
 
-        {/* Right scroll button (visible on desktop) */}
+        {/* Right scroll button */}
         <IconButton
           onClick={() => scroll('right')}
           disabled={!showRightButton}
           aria-label="Scroll right"
-          sx={{ 
+          sx={{
             display: { xs: 'none', md: 'flex' },
             padding: 1,
             visibility: showRightButton ? 'visible' : 'hidden',
+            backgroundColor: 'primary.main',
+            color: 'white',
+            '&:hover': { backgroundColor: 'primary.dark' },
           }}
         >
           <ArrowForward />
         </IconButton>
       </Box>
 
-      {/* Mobile scroll buttons (visible on mobile) */}
+      {/* Mobile scroll buttons */}
       <Box
         sx={{
           display: { xs: 'flex', md: 'none' },
@@ -191,6 +202,7 @@ const MediaShowcase = ({
           disabled={!showLeftButton}
           size="small"
           aria-label="Scroll left"
+          sx={{ backgroundColor: 'primary.main', color: 'white', '&:hover': { backgroundColor: 'primary.dark' } }}
         >
           <ArrowBack />
         </IconButton>
@@ -199,6 +211,7 @@ const MediaShowcase = ({
           disabled={!showRightButton}
           size="small"
           aria-label="Scroll right"
+          sx={{ backgroundColor: 'primary.main', color: 'white', '&:hover': { backgroundColor: 'primary.dark' } }}
         >
           <ArrowForward />
         </IconButton>

@@ -1,10 +1,9 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import MediaGallery from '@src/components/MediaGallery/MediaGallery';
 import MediaCard from '@src/components/Common/MediaCard/MediaCard';
 
 const MediaCategoryPage = () => {
   const { mediaType, mediaCategory } = useParams();
-  const navigate = useNavigate();
 
   const formatCategory = (category) => {
     return category
@@ -28,13 +27,12 @@ const MediaCategoryPage = () => {
       fetchUrl={fetchUrl}
       mediaType={mediaType}
       renderItem={(item) => (
-        <MediaCard
-          mediaData={item}
-          onClick={() => navigate(`/details/${mediaType}/${item.id}`)}
-        />
+        <Link to={`/details/${mediaType}/${item.id}` } style={{ textDecoration: 'none', color: 'inherit'}}>
+          <MediaCard mediaData={item} />
+        </Link>
       )}
     />
-  );
+  );  
 };
 
 export default MediaCategoryPage;

@@ -1,18 +1,9 @@
-import { useNavigate } from "react-router-dom";
-import { Typography } from "@mui/material";
+import { Typography, Box, Divider } from "@mui/material";
 import MediaShowcase from "@src/components/Common/MediaShowcase";
 
 const Filmography = ({ personData }) => {
   const { movie_credits = {}, tv_credits = {}, known_for } = personData;
 
-  console.log('movie credits: ', movie_credits);
-  const navigate = useNavigate();
-
-  const handleCardClick = (mediaType, mediaId) => {
-    navigate(`/details/${mediaType}/${mediaId}`);
-  };
-
-  // Safely access properties with default empty arrays
   const directingMovies = movie_credits.directing || [];
   const actingMovies = movie_credits.acting || [];
   const directingTvShows = tv_credits.directing || [];
@@ -37,32 +28,49 @@ const Filmography = ({ personData }) => {
   }
 
   return (
-    <div>
-      <Typography variant="h5" gutterBottom>
+    <Box>
+      {/* Filmography Heading */}
+      <Typography variant="h4" color="primary" fontWeight="bold" gutterBottom>
         Filmography
       </Typography>
+
       {sections.map((section, index) => (
-        <div key={index}>
-          <Typography variant="h6" gutterBottom>
-            {section.role}
+        <Box key={index} sx={{ mt: 3, mb: 4 }}>
+          {/* Role Section Header */}
+          <Typography variant="h5" color="secondary" fontWeight="bold" gutterBottom>
+            As {section.role}
           </Typography>
-          <Typography variant="subtitle1" gutterBottom>
-            Movies
-          </Typography>
-          <MediaShowcase
-            data={section.movies}
-            onCardClick={(mediaId) => handleCardClick("movie", mediaId.tmdb_id)}
-          />
-          <Typography variant="subtitle1" gutterBottom>
-            TV Series
-          </Typography>
-          <MediaShowcase
-            data={section.tvShows}
-            onCardClick={(mediaId) => handleCardClick("tv", mediaId.tmdb_id)}
-          />
-        </div>
+
+          <Divider sx={{ mb: 2 }} />
+
+          {/* Movies Section */}
+          {section.movies.length > 0 && (
+            <Box sx={{ mb: 3 }}>
+              <Typography variant="h6" color="primary" fontWeight="bold" gutterBottom>
+                Movies
+              </Typography>
+              <MediaShowcase 
+                data={section.movies}
+                detailsLink={(media) => `/details/movie/${media.tmdb_id}`}
+              />
+            </Box>
+          )}
+
+          {/* TV Series Section */}
+          {section.tvShows.length > 0 && (
+            <Box>
+              <Typography variant="h6" color="primary" fontWeight="bold" gutterBottom>
+                TV Series
+              </Typography>
+              <MediaShowcase 
+                data={section.tvShows}
+                detailsLink={(media) => `/details/tv/${media.tmdb_id}`}
+              />
+            </Box>
+          )}
+        </Box>
       ))}
-    </div>
+    </Box>
   );
 };
 
