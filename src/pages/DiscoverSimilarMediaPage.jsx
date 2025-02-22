@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
   Container,
   Typography,
@@ -18,7 +17,6 @@ import {
 } from '@mui/material';
 import usePersonSearch from '@src/hooks/usePersonSearch';
 import VALID_FILTERS from '@src/components/DiscoverSimilarMedia/DiscoveryFilter';
-import MediaCard from '@src/components/Common/MediaCard/MediaCard';
 import FallbackImage from '@src/assets/fallback-image.png';
 import api from "@src/utils/api";
 import MediaShowcase from "@src/components/Common/MediaShowcase";
@@ -35,7 +33,6 @@ const DiscoverSimilarMediaPage = () => {
   const [voteAverage, setVoteAverage] = useState('');
   const [keywords, setKeywords] = useState('');
   const [releaseYear, setReleaseYear] = useState('');
-  const navigate = useNavigate();
   
   // Search state
   const [actorSearchQuery, setActorSearchQuery] = useState('');
@@ -90,14 +87,6 @@ const DiscoverSimilarMediaPage = () => {
     }
   };
 
-  const handleMediaClick = (media) => {
-    const mediaType = media.mediaType || selectedMedia?.mediaType;
-    if (mediaType) {
-      navigate(`/details/${mediaType}/${media.id}`);
-    } else {
-      console.error("Media type is missing. Cannot navigate to details.");
-    }
-  };
 
   return (
       <Box sx={{ py: 4 }}>
@@ -307,7 +296,7 @@ const DiscoverSimilarMediaPage = () => {
                 ...item,
                 mediaType: item.mediaType || mediaType,
               }))}
-              onCardClick={handleMediaClick}
+              detailsLink={(media) => `/details/${media.mediaType}/${media.id}`}
             />
         </Box>
       </Box>

@@ -128,11 +128,11 @@ const SimilarMediaFromTMDB = () => {
         )}
         {similarMedia && similarMedia.length > 0 && (
           <MediaShowcase
-            data={similarMedia.map((item) => ({
-              ...item,
-              mediaType: item.mediaType || selectedMedia.mediaType,
+            data={similarMedia.map((media) => ({
+              ...media,
+              mediaType: media.mediaType || selectedMedia.mediaType,
             }))}
-            onCardClick={handleMediaClick}
+            detailsLink={(media) => `/details/${media.mediaType}/${media.id}`}
           />
         )}
         {similarMedia && similarMedia.length === 0 && (

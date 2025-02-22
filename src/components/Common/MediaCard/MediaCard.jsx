@@ -2,6 +2,7 @@ import { Box, Typography } from '@mui/material';
 import RatingBadge from '@src/components/Common/MediaCard/RatingBadge';
 import YearBadge from '@src/components/Common/MediaCard/YearBadge';
 import MediaOverview from '@src/components/Common/MediaCard/MediaOverview';
+import FallbackImage from '@src/assets/fallback-image.png';
 
 const MediaCard = ({ mediaData }) => {
   const { title, name, poster_path, overview, vote_average, release_date, first_air_date } = mediaData;
@@ -23,7 +24,7 @@ const MediaCard = ({ mediaData }) => {
         sx={{
           position: 'relative',
           height: { xs: '15rem', sm: '18rem', md: '20rem' },
-          backgroundImage: `url(https://image.tmdb.org/t/p/w500${poster_path || '/fallback.jpg'})`,
+          backgroundImage: `url(https://image.tmdb.org/t/p/w500${poster_path || FallbackImage})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           borderRadius: '0.625rem 0.625rem 0 0',

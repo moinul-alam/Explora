@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Autocomplete, TextField, Box, InputAdornment, Typography, CircularProgress } from "@mui/material";
 import { Search as SearchIcon } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import useMediaSearch from "@src/hooks/useMediaSearch";
 import useFetchData from "@src/hooks/useFetchData";
 import MediaShowcase from "@src/components/Common/MediaShowcase";
@@ -122,7 +122,19 @@ const SimilarMediaPage = () => {
   {/* Selected Media (1/5 width) */}
   {selectedMedia && (
     <Box sx={{ flex: "1 1 20%", minWidth: "200px", maxWidth: "250px" }}>
-      <MediaCard mediaData={selectedMedia} onClick={() => handleMediaClick(selectedMedia)} />
+      {/* <MediaCard mediaData={selectedMedia} onClick={() => handleMediaClick(selectedMedia)} /> */}
+      <Box
+        component={Link}
+        to={`/details/${selectedMedia.mediaType}/${selectedMedia.id}`}
+        sx={{
+          textDecoration: 'none',
+          color: 'inherit',
+          display: 'block',
+          width: '100%',
+        }}
+      >
+        <MediaCard mediaData={selectedMedia} />
+      </Box>
     </Box>
   )}
 
@@ -135,11 +147,11 @@ const SimilarMediaPage = () => {
     )}
     {similarMedia && similarMedia.length > 0 && (
       <MediaShowcase
-      data={similarMedia.map((item) => ({
-        ...item,
-        mediaType: item.mediaType || selectedMedia.mediaType,
+      data={similarMedia.map((media) => ({
+        ...media,
+        mediaType: media.mediaType || selectedMedia.mediaType,
       }))}
-      onCardClick={handleMediaClick}
+      detailsLink={(media) => `/details/${media.mediaType}/${media.tmdb_id}`}
       customItemsPerView={{
         xs: 1,  // 1 item on mobile
         sm: 2,  // 2 items on tablet

@@ -22,34 +22,22 @@ const MediaShowcase = ({
   const [showLeftButton, setShowLeftButton] = useState(false);
   const [showRightButton, setShowRightButton] = useState(false);
   const [itemsToShow, setItemsToShow] = useState(defaultItemsPerView.xs);
-  const [isContainerFocused, setIsContainerFocused] = useState(false);
 
   const itemsPerView = customItemsPerView || defaultItemsPerView;
 
-  // Memoize the resize handler to prevent unnecessary recreations
-  const handleResize = useCallback(() => {
-    const viewportWidth = window.innerWidth;
-    if (viewportWidth < 600) setItemsToShow(itemsPerView.xs);
-    else if (viewportWidth < 960) setItemsToShow(itemsPerView.sm);
-    else if (viewportWidth < 1280) setItemsToShow(itemsPerView.md);
-    else setItemsToShow(itemsPerView.lg);
-  }, [itemsPerView]);
-
-  // Debounced resize handler
   useEffect(() => {
-    let timeoutId;
-    const debouncedResize = () => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(handleResize, 150);
+    const handleResize = () => {
+      const viewportWidth = window.innerWidth;
+      if (viewportWidth < 600) setItemsToShow(itemsPerView.xs);
+      else if (viewportWidth < 960) setItemsToShow(itemsPerView.sm);
+      else if (viewportWidth < 1280) setItemsToShow(itemsPerView.md);
+      else setItemsToShow(itemsPerView.lg);
     };
 
     handleResize();
-    window.addEventListener('resize', debouncedResize);
-    return () => {
-      window.removeEventListener('resize', debouncedResize);
-      clearTimeout(timeoutId);
-    };
-  }, [handleResize]);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [itemsPerView]);
 
   const calculateItemWidth = useCallback(() => {
     const container = scrollContainerRef.current;
@@ -57,25 +45,21 @@ const MediaShowcase = ({
   
     const availableWidth = container.clientWidth;
     const totalSpacing = (itemsToShow - 1) * theme.spacing(spacing);
+  
     return Math.floor((availableWidth - totalSpacing) / itemsToShow);
   }, [itemsToShow, spacing, theme]);
+  
 
-  // Optimize ResizeObserver with debouncing
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
 
-    let timeoutId;
     const resizeObserver = new ResizeObserver(() => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => setItemWidth(calculateItemWidth()), 150);
+      setItemWidth(calculateItemWidth());
     });
 
     resizeObserver.observe(container);
-    return () => {
-      resizeObserver.disconnect();
-      clearTimeout(timeoutId);
-    };
+    return () => resizeObserver.disconnect();
   }, [calculateItemWidth]);
 
   const scroll = useCallback((direction) => {
@@ -86,73 +70,38 @@ const MediaShowcase = ({
     }
   }, []);
 
-  // Memoize scroll button visibility check
-  const updateScrollButtons = useCallback(() => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    setShowLeftButton(container.scrollLeft > 0);
-    setShowRightButton(
-      container.scrollLeft < container.scrollWidth - container.clientWidth
-    );
-  }, []);
-
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
 
-    container.addEventListener('scroll', updateScrollButtons);
-    updateScrollButtons();
-    return () => container.removeEventListener('scroll', updateScrollButtons);
-  }, [data, updateScrollButtons]);
+    const handleScroll = () => {
+      setShowLeftButton(container.scrollLeft > 0);
+      setShowRightButton(
+        container.scrollLeft < container.scrollWidth - container.clientWidth
+      );
+    };
 
-  // Add focus handling for keyboard navigation
+    handleScroll();
+    container.addEventListener('scroll', handleScroll);
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, [data]);
+
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (!isContainerFocused) return;
-      
       if (e.key === 'ArrowLeft' && showLeftButton) {
-        e.preventDefault();
         scroll('left');
       } else if (e.key === 'ArrowRight' && showRightButton) {
-        e.preventDefault();
         scroll('right');
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [showLeftButton, showRightButton, scroll, isContainerFocused]);
-
-  // Common styles using MUI's sx prop
-  const scrollButtonStyles = {
-    backgroundColor: 'primary.main',
-    color: 'white',
-    '&:hover': { 
-      backgroundColor: 'primary.dark' 
-    },
-    '&.Mui-disabled': {
-      backgroundColor: 'action.disabledBackground',
-      color: 'action.disabled',
-    }
-  };
-
-  const mediaItemStyles = {
-    flexShrink: 0,
-    scrollSnapAlign: 'start',
-    width: `${itemWidth}px`,
-    display: 'flex',
-    justifyContent: 'center',
-    borderRadius: '4px',
-    boxShadow: theme.shadows[1],
-    transition: 'box-shadow 0.2s ease-in-out',
-    '&:hover': { 
-      boxShadow: theme.shadows[4] 
-    }
-  };
+  }, [showLeftButton, showRightButton, scroll]);
 
   return (
     <Box>
+      {/* Showcase Container */}
       <Box
         sx={{
           display: 'flex',
@@ -162,6 +111,7 @@ const MediaShowcase = ({
           boxShadow: theme.shadows[1],
         }}
       >
+        {/* Left scroll button */}
         <IconButton
           onClick={() => scroll('left')}
           disabled={!showLeftButton}
@@ -170,19 +120,20 @@ const MediaShowcase = ({
             display: { xs: 'none', md: 'flex' },
             padding: 1,
             visibility: showLeftButton ? 'visible' : 'hidden',
-            ...scrollButtonStyles,
+            backgroundColor: 'primary.main',
+            color: 'white',
+            '&:hover': { backgroundColor: 'primary.dark' },
           }}
         >
           <ArrowBack />
         </IconButton>
 
+        {/* Scrollable content */}
         <Box
           ref={scrollContainerRef}
           role="region"
           aria-label="Media Showcase"
           tabIndex={0}
-          onFocus={() => setIsContainerFocused(true)}
-          onBlur={() => setIsContainerFocused(false)}
           sx={{
             display: 'flex',
             gap: spacing,
@@ -201,24 +152,25 @@ const MediaShowcase = ({
               key={media.id}
               role="group"
               aria-label={`Media item: ${media.title}`}
-              sx={mediaItemStyles}
+              sx={{
+                flexShrink: 0,
+                scrollSnapAlign: 'start',
+                width: `${itemWidth}px`,
+                display: 'flex',
+                justifyContent: 'center',
+                borderRadius: '4px',
+                boxShadow: theme.shadows[1],
+                '&:hover': { boxShadow: theme.shadows[4] },
+              }}
             >
-              <Box
-                component={Link}
-                to={detailsLink(media)}
-                sx={{
-                  textDecoration: 'none',
-                  color: 'inherit',
-                  display: 'block',
-                  width: '100%',
-                }}
-              >
+              <Link to={detailsLink(media)} style={{ textDecoration: 'none', color: 'inherit'}}>
                 <MediaCard mediaData={media} />
-              </Box>
+              </Link>
             </Box>
           ))}
         </Box>
 
+        {/* Right scroll button */}
         <IconButton
           onClick={() => scroll('right')}
           disabled={!showRightButton}
@@ -227,13 +179,16 @@ const MediaShowcase = ({
             display: { xs: 'none', md: 'flex' },
             padding: 1,
             visibility: showRightButton ? 'visible' : 'hidden',
-            ...scrollButtonStyles,
+            backgroundColor: 'primary.main',
+            color: 'white',
+            '&:hover': { backgroundColor: 'primary.dark' },
           }}
         >
           <ArrowForward />
         </IconButton>
       </Box>
 
+      {/* Mobile scroll buttons */}
       <Box
         sx={{
           display: { xs: 'flex', md: 'none' },
@@ -247,7 +202,7 @@ const MediaShowcase = ({
           disabled={!showLeftButton}
           size="small"
           aria-label="Scroll left"
-          sx={scrollButtonStyles}
+          sx={{ backgroundColor: 'primary.main', color: 'white', '&:hover': { backgroundColor: 'primary.dark' } }}
         >
           <ArrowBack />
         </IconButton>
@@ -256,7 +211,7 @@ const MediaShowcase = ({
           disabled={!showRightButton}
           size="small"
           aria-label="Scroll right"
-          sx={scrollButtonStyles}
+          sx={{ backgroundColor: 'primary.main', color: 'white', '&:hover': { backgroundColor: 'primary.dark' } }}
         >
           <ArrowForward />
         </IconButton>
