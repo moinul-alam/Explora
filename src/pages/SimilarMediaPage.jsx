@@ -18,12 +18,19 @@ const SimilarMediaPage = () => {
   const isMobile = useMediaQuery("(max-width:600px)");
 
   // Fetch similar media only when valid media is selected
-  const shouldFetch = selectedMedia?.mediaType && selectedMedia?.id;
+  // const shouldFetch = selectedMedia?.mediaType && selectedMedia?.id;
+  // const { data: similarMedia, loading } = useFetchData(
+  //   shouldFetch ? `recommender/${selectedMedia.mediaType}/${selectedMedia.id}/similar` : null,
+  //   {},
+  //   [selectedMedia]
+  // );
+  const shouldFetch = Boolean(selectedMedia?.mediaType && selectedMedia?.id);
   const { data: similarMedia, loading } = useFetchData(
     shouldFetch ? `recommender/${selectedMedia.mediaType}/${selectedMedia.id}/similar` : null,
     {},
     [selectedMedia]
   );
+
 
   // Handle search input changes
   const handleKeyDown = (event) => {
@@ -122,7 +129,6 @@ const SimilarMediaPage = () => {
   {/* Selected Media (1/5 width) */}
   {selectedMedia && (
     <Box sx={{ flex: "1 1 20%", minWidth: "200px", maxWidth: "250px" }}>
-      {/* <MediaCard mediaData={selectedMedia} onClick={() => handleMediaClick(selectedMedia)} /> */}
       <Box
         component={Link}
         to={`/details/${selectedMedia.mediaType}/${selectedMedia.id}`}
@@ -131,6 +137,7 @@ const SimilarMediaPage = () => {
           color: 'inherit',
           display: 'block',
           width: '100%',
+          pt: 2
         }}
       >
         <MediaCard mediaData={selectedMedia} />
@@ -140,30 +147,31 @@ const SimilarMediaPage = () => {
 
   {/* Similar Media Showcase (4/5 width) */}
   <Box sx={{ flex: "4 1 80%", minWidth: "400px" }}>
-    {loading && (
-      <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-        <CircularProgress />
+          {shouldFetch && loading && (
+            <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
+              <CircularProgress />
+            </Box>
+          )}
+          {similarMedia && similarMedia.length > 0 && (
+            <MediaShowcase
+              data={similarMedia.map((media) => ({
+                ...media,
+                mediaType: media.mediaType || selectedMedia.mediaType,
+              }))}
+              detailsLink={(media) => `/details/${media.mediaType}/${media.tmdb_id}`}
+              customItemsPerView={{
+                xs: 1,
+                sm: 2,
+                md: 3,
+                lg: 3
+              }}
+            />
+          )}
+          {similarMedia && similarMedia.length === 0 && (
+            <Typography align="center">No similar media found.</Typography>
+          )}
+        </Box>
       </Box>
-    )}
-    {similarMedia && similarMedia.length > 0 && (
-      <MediaShowcase
-      data={similarMedia.map((media) => ({
-        ...media,
-        mediaType: media.mediaType || selectedMedia.mediaType,
-      }))}
-      detailsLink={(media) => `/details/${media.mediaType}/${media.tmdb_id}`}
-      customItemsPerView={{
-        xs: 1,  // 1 item on mobile
-        sm: 2,  // 2 items on tablet
-        md: 3,  // 3 items on desktop and up
-        lg: 3
-      }}
-    />
-    )}
-    {similarMedia && similarMedia.length === 0 && <Typography align="center">No similar media found.</Typography>}
-  </Box>
-</Box>
-
     </>
   );
 };

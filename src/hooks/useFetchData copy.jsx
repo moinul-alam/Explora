@@ -3,18 +3,11 @@ import api from '@src/utils/api';
 
 const useFetchData = (endpoint, options = {}, extraDependencies = []) => {
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(false);  // Initialize as false
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const fetchData = useCallback(async () => {
-    // Only proceed if endpoint is provided
-    if (!endpoint) {
-      setLoading(false);
-      setData(null);
-      setError(null);
-      return;
-    }
-
+    setData(null);
     setLoading(true);
     setError(null);
 
@@ -23,7 +16,6 @@ const useFetchData = (endpoint, options = {}, extraDependencies = []) => {
       setData(response.data.results || response.data);
     } catch (err) {
       setError(err.response?.data?.message || err.message || "An error occurred");
-      setData(null);
     } finally {
       setLoading(false);
     }
@@ -31,9 +23,10 @@ const useFetchData = (endpoint, options = {}, extraDependencies = []) => {
 
   useEffect(() => {
     fetchData();
-  }, [endpoint, JSON.stringify(options), ...extraDependencies]);
+  }, [endpoint, JSON.stringify(options), ...extraDependencies]); 
 
   return { data, loading, error, refetch: fetchData };
 };
 
 export default useFetchData;
+
