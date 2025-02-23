@@ -126,7 +126,7 @@ const SearchBar = () => {
         )}
         PopperProps={{
           sx: {
-            zIndex: theme.zIndex.modal, // Ensures dropdown doesn't get overlapped
+            zIndex: theme.zIndex.modal, 
           },
         }}
       />

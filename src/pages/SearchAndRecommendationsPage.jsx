@@ -1,0 +1,209 @@
+import { useState, useRef, useEffect } from "react";
+import { Box, Typography, CircularProgress, Button, IconButton } from "@mui/material";
+import { Close, ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
+import MediaShowcase from "@src/components/Common/MediaShowcase";
+import MediaCard from "@src/components/Common/MediaCard/MediaCard";
+import SearchBar from "@src/components/Common/SearchBar";
+import api from "@src/utils/api";
+
+const SearchAndRecommendationsPage = () => {
+  const [selectedMedia, setSelectedMedia] = useState([]);
+  const [fetchTrigger, setFetchTrigger] = useState(false);
+  const [recommendations, setRecommendations] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const scrollContainerRef = useRef(null);
+
+  // Fetch recommendations when fetchTrigger changes
+  useEffect(() => {
+    const fetchRecommendations = async () => {
+      if (selectedMedia.length === 0) return;
+
+      setLoading(true);
+      try {
+        const response = await api.post("/recommender/collaborative/item-based-recommendations", {
+          tmdb_ids: selectedMedia.map((media) => media.tmdb_id || media.id),
+        });
+
+        if (response?.data && Array.isArray(response.data)) {
+          setRecommendations(response.data);
+        } else {
+          setRecommendations([]);
+        }
+      } catch (error) {
+        console.error("Error fetching recommendations:", error.message);
+        setRecommendations([]);
+      }
+      setLoading(false);
+    };
+
+    if (fetchTrigger) {
+      fetchRecommendations();
+    }
+  }, [fetchTrigger, selectedMedia]); // Added selectedMedia to dependencies
+
+  const handleSelect = (media) => {
+    const mediaId = media.tmdb_id || media.id;
+    if (!selectedMedia.some((item) => (item.tmdb_id || item.id) === mediaId)) {
+      setSelectedMedia([...selectedMedia, media]);
+    }
+  };
+
+  const handleRemove = (id) => {
+    setSelectedMedia(selectedMedia.filter((media) => (media.tmdb_id || media.id) !== id));
+    if (selectedMedia.length === 1) {
+      setRecommendations([]); // Clear recommendations when removing last item
+      setFetchTrigger(false);
+    }
+  };
+
+  const handleGetRecommendations = () => {
+    if (selectedMedia.length > 0) {
+      setFetchTrigger((prev) => !prev);
+    }
+  };
+
+  const scrollLeft = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: -200, behavior: "smooth" });
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: 200, behavior: "smooth" });
+    }
+  };
+
+  return (
+    <>
+      <Box sx={{ textAlign: "center", mb: 3 }}>
+        <Typography variant="h3" sx={{ p: 3 }}>
+          Search and Select Your Favorite Movies or TV Shows
+        </Typography>
+      </Box>
+
+      {/* Search Bar */}
+      <Box sx={{ width: "20rem", mx: "auto", mb: 2 }}>
+        <SearchBar onSelect={handleSelect} />
+      </Box>
+
+      {/* Selected Media Box with Scrollable Feature */}
+      {selectedMedia.length > 0 && (
+        <Box sx={{ width: "100%", maxWidth: "800px", mx: "auto", mb: 3, p: 2, border: "1px solid #ddd", borderRadius: 2, position: "relative" }}>
+          <Typography variant="h6" sx={{ mb: 1 }}>Selected Movies</Typography>
+          
+          {/* Left Arrow Button */}
+          <IconButton 
+            onClick={scrollLeft} 
+            sx={{ 
+              position: "absolute", 
+              left: "-20px", 
+              top: "50%", 
+              transform: "translateY(-50%)", 
+              background: "rgba(255,255,255,0.7)", 
+              "&:hover": { background: "rgba(255,255,255,1)" },
+              display: selectedMedia.length > 3 ? "block" : "none"
+            }}
+          >
+            <ArrowBackIos />
+          </IconButton>
+
+          {/* Scrollable Container */}
+          <Box 
+            ref={scrollContainerRef}
+            sx={{
+              display: "flex",
+              overflowX: "auto",
+              scrollbarWidth: "none",
+              "&::-webkit-scrollbar": { display: "none" },
+              gap: "16px",
+              p: 1,
+              scrollBehavior: "smooth",
+            }}
+          >
+            {selectedMedia.map((media) => (
+              <Box 
+                key={media.tmdb_id || media.id} 
+                sx={{ 
+                  position: "relative", 
+                  flex: "0 0 120px",
+                  width: "120px",
+                  minWidth: "120px",
+                }}
+              >
+                <MediaCard
+                  mediaData={{
+                    ...media
+                  }}
+                />
+                <IconButton
+                  onClick={() => handleRemove(media.tmdb_id || media.id)}
+                  sx={{
+                    position: "absolute",
+                    top: 0,
+                    right: 0,
+                    background: "rgba(255,255,255,0.7)",
+                    "&:hover": { background: "rgba(255,255,255,1)" },
+                  }}
+                  size="small"
+                >
+                  <Close fontSize="small" />
+                </IconButton>
+              </Box>
+            ))}
+          </Box>
+
+          {/* Right Arrow Button */}
+          <IconButton 
+            onClick={scrollRight} 
+            sx={{ 
+              position: "absolute", 
+              right: "-20px", 
+              top: "50%", 
+              transform: "translateY(-50%)", 
+              background: "rgba(255,255,255,0.7)", 
+              "&:hover": { background: "rgba(255,255,255,1)" },
+              display: selectedMedia.length > 3 ? "block" : "none"
+            }}
+          >
+            <ArrowForwardIos />
+          </IconButton>
+        </Box>
+      )}
+
+      {/* Get Recommendations Button */}
+      {selectedMedia.length > 0 && (
+        <Box sx={{ textAlign: "center", mb: 3 }}>
+          <Button variant="contained" onClick={handleGetRecommendations}>
+            Get Recommendations
+          </Button>
+        </Box>
+      )}
+
+      {/* Recommendations Showcase */}
+      <Box sx={{ width: "100%", maxWidth: "1200px", mx: "auto", mt: 3 }}>
+        {loading && (
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
+            <CircularProgress />
+          </Box>
+        )}
+        {recommendations.length > 0 ? (
+          <MediaShowcase
+            data={recommendations.map((media) => ({
+              ...media,
+              mediaType: media.mediaType || "movie",
+              vote_average: Number(media.vote_average) || 0,
+              year: media.release_date ? new Date(media.release_date).getFullYear() : "N/A",
+            }))}
+            detailsLink={(media) => `/details/${media.mediaType}/${media.tmdb_id || media.id}`}
+            customItemsPerView={{ xs: 1, sm: 2, md: 3, lg: 3 }}
+          />
+        ) : (
+          fetchTrigger && !loading && <Typography align="center">No recommendations found.</Typography>
+        )}
+      </Box>
+    </>
+  );
+};
+
+export default SearchAndRecommendationsPage;

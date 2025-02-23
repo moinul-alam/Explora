@@ -72,7 +72,7 @@ const RecommenderPage = () => {
         {/* Search, Rate and Get Recommendations */}
         <Grid item xs={12} sm={6} md={4}>
           <a
-            href="/rating_recommender"
+            href="/search_recommender"
             target="_blank"
             rel="noopener noreferrer"
             style={{ textDecoration: 'none' }}

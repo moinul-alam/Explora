@@ -73,7 +73,7 @@ const DiscoverSimilarMediaPage = () => {
     };
 
     try {
-      const response = await api.post('recommender/discover', {
+      const response = await api.post('recommender/content-based/discover', {
         metadata
       });
 

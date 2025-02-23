@@ -3,17 +3,11 @@ import api from '@src/utils/api';
 
 const useFetchData = (endpoint, options = {}, extraDependencies = []) => {
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(false);  // Initialize as false
+  const [loading, setLoading] = useState(true);  // Ensure initial loading is true
   const [error, setError] = useState(null);
 
   const fetchData = useCallback(async () => {
-    // Only proceed if endpoint is provided
-    if (!endpoint) {
-      setLoading(false);
-      setData(null);
-      setError(null);
-      return;
-    }
+    if (!endpoint) return;  // Prevent unnecessary fetching
 
     setLoading(true);
     setError(null);
@@ -30,7 +24,9 @@ const useFetchData = (endpoint, options = {}, extraDependencies = []) => {
   }, [endpoint, JSON.stringify(options)]);
 
   useEffect(() => {
-    fetchData();
+    if (endpoint) {  // Avoid calling fetchData if no endpoint
+      fetchData();
+    }
   }, [endpoint, JSON.stringify(options), ...extraDependencies]);
 
   return { data, loading, error, refetch: fetchData };

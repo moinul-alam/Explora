@@ -181,7 +181,7 @@ const ExploraChat = () => {
         ratings: ratings
       };
   
-      const response = await api.post(`recommender/collaborative/recommendations`, payload);
+      const response = await api.post(`recommender/collaborative/user-based-recommendations`, payload);
       const recommendations = response.data;
       setRecommendedMovies(recommendations);
       setPreviousStep('rating');
