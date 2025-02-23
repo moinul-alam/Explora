@@ -16,6 +16,7 @@ const NavigationMenu = ({ isMobile, onItemClick }) => {
   ];
 
   const exploreItems = [
+    { label: 'Recommender', link: '/recommender' },
     { label: 'Find Similar Movies or TV Shows', link: '/explore/similar' },
     { label: 'Discover Movies and TV Shows', link: '/explore/discover' },
     { label: 'Explore Movie Genres', link: '/explore/genre/movie/list' },

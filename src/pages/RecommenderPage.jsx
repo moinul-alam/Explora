@@ -1,93 +1,120 @@
 import React from 'react';
 import { Button, Grid, Typography, Container } from '@mui/material';
-import { Movie, Search, Chat, RateReview } from '@mui/icons-material';
+import { Theaters, MovieFilter, Chat, Favorite } from '@mui/icons-material';
 
 const RecommenderPage = () => {
+  const buttonStyles = {
+    height: 120,
+    fontSize: '1.1rem',
+    fontWeight: 500,
+    borderRadius: 2,
+    textTransform: 'none',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 2,
+    padding: 3,
+    '&:hover': {
+      transform: 'translateY(-2px)',
+      transition: 'transform 0.2s ease-in-out'
+    }
+  };
+
+  const featureCards = [
+    {
+      title: 'Find Similar Movies',
+      description: 'Discover movies similar to your favorites',
+      icon: <Theaters sx={{ fontSize: 40 }} />,
+      color: 'primary',
+      href: '/explore/similar'
+    },
+    {
+      title: 'Discover Movies',
+      description: 'Explore new movies based on your interests',
+      icon: <MovieFilter sx={{ fontSize: 40 }} />,
+      color: 'secondary',
+      href: '/explore/discover'
+    },
+    {
+      title: 'Chat for Recommendations',
+      description: 'Get personalized recommendations through chat',
+      icon: <Chat sx={{ fontSize: 40 }} />,
+      color: 'success',
+      href: '/chat_recommender'
+    },
+    {
+      title: 'Select & Get Recommendations',
+      description: 'Select favorite movies to receive tailored suggestions',
+      icon: <Favorite sx={{ fontSize: 40 }} />,
+      color: 'warning',
+      href: '/search_recommender'
+    }
+  ];
+
   return (
-    <Container sx={{ marginTop: 4, paddingBottom: 4 }}>
-      <Typography variant="h4" align="center" sx={{ mb: 3 }}>
-        Movie Recommendation Features
+    <Container maxWidth="lg" sx={{ py: 6 }}>
+      <Typography 
+        variant="h3" 
+        align="center" 
+        sx={{ 
+          mb: 2,
+          fontWeight: 'bold',
+          background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+          backgroundClip: 'text',
+          WebkitBackgroundClip: 'text',
+          color: 'transparent'
+        }}
+      >
+        Movie Recommendations
       </Typography>
       
-      <Grid container spacing={3} justifyContent="center">
-        {/* Find Similar Movie */}
-        <Grid item xs={12} sm={6} md={4}>
-          <a
-            href="/explore/similar"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ textDecoration: 'none' }}
-          >
-            <Button
-              variant="contained"
-              fullWidth
-              color="primary"
-              startIcon={<Movie />}
-              sx={{ height: 100, fontSize: '1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-            >
-              Find Similar Movie
-            </Button>
-          </a>
-        </Grid>
-        {/* Find A Movie */}
-        <Grid item xs={12} sm={6} md={4}>
-          <a
-            href="/explore/discover"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ textDecoration: 'none' }}
-          >
-            <Button
-              variant="contained"
-              fullWidth
-              color="secondary"
-              startIcon={<Search />}
-              sx={{ height: 100, fontSize: '1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-            >
-              Find A Movie
-            </Button>
-          </a>
-        </Grid>
+      <Typography 
+        variant="h6" 
+        align="center" 
+        sx={{ 
+          mb: 6,
+          color: 'text.secondary',
+          maxWidth: 600,
+          mx: 'auto'
+        }}
+      >
+        Discover your next favorite movie through our personalized recommendation features
+      </Typography>
 
-        {/* Chat and Get Recommendations */}
-        <Grid item xs={12} sm={6} md={4}>
-          <a
-            href="/chat_recommender"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ textDecoration: 'none' }}
-          >
-            <Button
-              variant="contained"
-              fullWidth
-              color="success"
-              startIcon={<Chat />}
-              sx={{ height: 100, fontSize: '1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      <Grid container spacing={4}>
+        {featureCards.map((card) => (
+          <Grid item xs={12} md={6} key={card.title}>
+            <a 
+              href={card.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ textDecoration: 'none' }}
             >
-              Chat and Get Recommendations
-            </Button>
-          </a>
-        </Grid>
-
-        {/* Search, Rate and Get Recommendations */}
-        <Grid item xs={12} sm={6} md={4}>
-          <a
-            href="/search_recommender"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ textDecoration: 'none' }}
-          >
-            <Button
-              variant="contained"
-              fullWidth
-              color="warning"
-              startIcon={<RateReview />}
-              sx={{ height: 100, fontSize: '1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-            >
-              Search, Rate and Get Recommendations
-            </Button>
-          </a>
-        </Grid>
+              <Button
+                variant="contained"
+                fullWidth
+                color={card.color}
+                sx={buttonStyles}
+              >
+                {card.icon}
+                <div>
+                  <Typography variant="h6" component="div">
+                    {card.title}
+                  </Typography>
+                  <Typography 
+                    variant="body2" 
+                    sx={{ 
+                      mt: 1,
+                      opacity: 0.9,
+                      color: 'inherit'
+                    }}
+                  >
+                    {card.description}
+                  </Typography>
+                </div>
+              </Button>
+            </a>
+          </Grid>
+        ))}
       </Grid>
     </Container>
   );
