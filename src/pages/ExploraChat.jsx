@@ -21,6 +21,7 @@ import {
 import MediaCard from '@src/components/Common/MediaCard/MediaCard';
 import api from "@src/utils/api";
 import useFetchData from '@src/hooks/useFetchData';
+import MovieLoader from '@src/components/Common/MovieLoader';
 
 const mediaTypes = ["movie", "tv"];
 
@@ -158,7 +159,6 @@ const ExploraChat = () => {
       prev + 3 >= recommendedMovies.length ? 0 : prev + 3
     );
   };
-
 
   const handlePreviousStep = () => {
     setMessages(previousMessages);
@@ -343,7 +343,7 @@ const ExploraChat = () => {
   
       case 'rating':
         if (isLoading) {
-          return <CircularProgress />;
+          return <MovieLoader />;
         }
         
         if (!availableMovies || !availableMovies[currentMovieIndex]) {
