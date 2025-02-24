@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Grid, Typography, Container, Box } from '@mui/material';
-import { Theaters, MovieFilter, Chat, Favorite, Star } from '@mui/icons-material';
+import { Movie, CameraRoll, Theaters, MovieFilter, Chat, Favorite, Star, LocalMovies, GridOn } from '@mui/icons-material';
 import { keyframes } from '@emotion/react';
 
 // Define a subtle animation for the buttons
@@ -31,24 +31,24 @@ const RecommenderPage = () => {
 
   const featureCards = [
     {
-      title: 'Find Similar Movies',
-      description: 'Discover movies similar to your favorites',
-      icon: <Theaters sx={{ fontSize: 40 }} />,
-      color: 'primary',
+      title: 'Similar Movies',
+      description: 'Find similar movies to your favorite ones',
+      icon: <Movie sx={{ fontSize: 40 }} />,
+      color: 'success',
       href: '/explore/similar'
     },
     {
       title: 'Discover Movies',
-      description: 'Explore new movies based on your interests',
+      description: 'Discover a movie by providing a brief description',
       icon: <MovieFilter sx={{ fontSize: 40 }} />,
-      color: 'secondary',
+      color: 'success',
       href: '/explore/discover'
     },
     {
-      title: 'Chat for Recommendations',
+      title: 'Chat with Explora',
       description: 'Get personalized recommendations through chat',
       icon: <Chat sx={{ fontSize: 40 }} />,
-      color: 'success',
+      color: 'warning',
       href: '/explore/user_chat_recommender'
     },
     {
@@ -60,15 +60,22 @@ const RecommenderPage = () => {
     },
     {
       title: 'Select, Rate & Get Recommendations',
-      description: 'Select and rate favorite movies to receive tailored suggestions',
+      description: 'Rate favorite movies to receive tailored suggestions',
       icon: <Star sx={{ fontSize: 40 }} />,
       color: 'error',
       href: '/explore/user_rating_recommender'
+    },
+    {
+      title: 'Advanced Recommendations',
+      description: 'Rate favorite movies to receive tailored suggestions',
+      icon: <GridOn sx={{ fontSize: 40 }} />,
+      color: 'error',
+      href: '/explore/advanced_recommender'
     }
   ];
 
   return (
-    <Container maxWidth="lg" sx={{ py: 8 }}>
+    <Container maxWidth="md" sx={{ py: 8 }}>
       <Box textAlign="center" mb={6}>
         <Typography 
           variant="h2" 
