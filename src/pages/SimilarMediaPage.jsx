@@ -5,6 +5,7 @@ import useFetchData from "@src/hooks/useFetchData";
 import MediaShowcase from "@src/components/Common/MediaShowcase";
 import MediaCard from "@src/components/Common/MediaCard/MediaCard";
 import SearchBar from "@src/components/Common/SearchBar";
+import MovieLoader from "@src/components/Common/MovieLoader";
 
 const SimilarMediaPage = () => {
   const [selectedMedia, setSelectedMedia] = useState(null);
@@ -79,7 +80,7 @@ const SimilarMediaPage = () => {
         <Box sx={{ flex: "4 1 80%", minWidth: "400px" }}>
           {shouldFetch && loading && (
             <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
-              <CircularProgress />
+              <MovieLoader />
             </Box>
           )}
           {similarMedia && similarMedia.length > 0 && (

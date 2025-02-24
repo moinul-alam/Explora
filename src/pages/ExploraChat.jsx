@@ -159,9 +159,6 @@ const ExploraChat = () => {
     );
   };
 
-  const handleSaveToWatchlist = () => {
-    alert('Please register to save to watchlist');
-  };
 
   const handlePreviousStep = () => {
     setMessages(previousMessages);
@@ -452,19 +449,6 @@ const ExploraChat = () => {
                         >
                           Seen it
                         </Button>
-                        <IconButton 
-                          onClick={handleSaveToWatchlist}
-                          sx={{
-                            color: 'primary.main',
-                            transition: 'all 0.2s ease-in-out',
-                            '&:hover': { 
-                              color: 'primary.dark',
-                              transform: 'scale(1.1)'
-                            }
-                          }}
-                        >
-                          <Bookmark />
-                        </IconButton>
                       </Stack>
                     </Box>
                   ))}

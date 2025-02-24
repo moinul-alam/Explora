@@ -5,39 +5,41 @@ import MediaShowcase from "@src/components/Common/MediaShowcase";
 import MediaCard from "@src/components/Common/MediaCard/MediaCard";
 import SearchBar from "@src/components/Common/SearchBar";
 import api from "@src/utils/api";
-import MovieLoader from "@src/components/Common/MovieLoader";
-
 
 const SearchAndRecommendationsPage = () => {
   const [selectedMedia, setSelectedMedia] = useState([]);
+  const [fetchTrigger, setFetchTrigger] = useState(false);
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(false);
   const scrollContainerRef = useRef(null);
 
-  const [hasFetched, setHasFetched] = useState(false); 
+  // Fetch recommendations when fetchTrigger changes
+  useEffect(() => {
+    const fetchRecommendations = async () => {
+      if (selectedMedia.length === 0) return;
 
-  const fetchRecommendations = async () => {
-    if (selectedMedia.length === 0) return;
+      setLoading(true);
+      try {
+        const response = await api.post("/recommender/collaborative/item-based-recommendations", {
+          tmdb_ids: selectedMedia.map((media) => media.tmdb_id || media.id),
+        });
 
-    setLoading(true);
-    setHasFetched(true);
-    
-    try {
-      const response = await api.post("/recommender/collaborative/item-based-recommendations", {
-        tmdb_ids: selectedMedia.map((media) => media.tmdb_id || media.id),
-      });
-
-      if (response?.data && Array.isArray(response.data)) {
-        setRecommendations(response.data);
-      } else {
+        if (response?.data && Array.isArray(response.data)) {
+          setRecommendations(response.data);
+        } else {
+          setRecommendations([]);
+        }
+      } catch (error) {
+        console.error("Error fetching recommendations:", error.message);
         setRecommendations([]);
       }
-    } catch (error) {
-      console.error("Error fetching recommendations:", error.message);
-      setRecommendations([]);
+      setLoading(false);
+    };
+
+    if (fetchTrigger) {
+      fetchRecommendations();
     }
-    setLoading(false);
-  };
+  }, [fetchTrigger, selectedMedia]);
 
   const handleSelect = (media) => {
     const mediaId = media.tmdb_id || media.id;
@@ -49,13 +51,14 @@ const SearchAndRecommendationsPage = () => {
   const handleRemove = (id) => {
     setSelectedMedia(selectedMedia.filter((media) => (media.tmdb_id || media.id) !== id));
     if (selectedMedia.length === 1) {
-      setRecommendations([]); // Only clear recommendations when removing last item
+      setRecommendations([]);
+      setFetchTrigger(false);
     }
   };
 
   const handleGetRecommendations = () => {
     if (selectedMedia.length > 0) {
-      fetchRecommendations();
+      setFetchTrigger((prev) => !prev);
     }
   };
 
@@ -71,8 +74,8 @@ const SearchAndRecommendationsPage = () => {
     }
   };
 
-  // Create a key based on the recommendations data itself
-  const showcaseKey = recommendations.map(media => media.tmdb_id || media.id).join('-');
+  // Create a key based on selected media IDs
+  const showcaseKey = selectedMedia.map(media => media.tmdb_id || media.id).join('-');
 
   return (
     <>
@@ -177,26 +180,24 @@ const SearchAndRecommendationsPage = () => {
       <Box sx={{ width: "100%", maxWidth: "1200px", mx: "auto", mt: 3 }}>
         {loading && (
           <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
-            <MovieLoader />
+            <CircularProgress />
           </Box>
         )}
         {recommendations.length > 0 ? (
-  <MediaShowcase
-    key={showcaseKey}
-    data={recommendations.map((media) => ({
-      ...media,
-      mediaType: media.mediaType || "movie",
-      vote_average: Number(media.vote_average) || 0,
-      year: media.release_date ? new Date(media.release_date).getFullYear() : "N/A",
-    }))}
-    detailsLink={(media) => `/details/${media.mediaType}/${media.tmdb_id || media.id}`}
-    customItemsPerView={{ xs: 1, sm: 2, md: 3, lg: 3 }}
-  />
-) : (
-  hasFetched && !loading && recommendations.length === 0 && (
-    <Typography align="center">No recommendations found.</Typography>
-  )
-)}
+          <MediaShowcase
+            key={showcaseKey} // Add unique key based on selected media
+            data={recommendations.map((media) => ({
+              ...media,
+              mediaType: media.mediaType || "movie",
+              vote_average: Number(media.vote_average) || 0,
+              year: media.release_date ? new Date(media.release_date).getFullYear() : "N/A",
+            }))}
+            detailsLink={(media) => `/details/${media.mediaType}/${media.tmdb_id || media.id}`}
+            customItemsPerView={{ xs: 1, sm: 2, md: 3, lg: 3 }}
+          />
+        ) : (
+          fetchTrigger && !loading && <Typography align="center">No recommendations found.</Typography>
+        )}
       </Box>
     </>
   );

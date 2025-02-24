@@ -1,10 +1,18 @@
 import React from 'react';
-import { Button, Grid, Typography, Container } from '@mui/material';
-import { Theaters, MovieFilter, Chat, Favorite } from '@mui/icons-material';
+import { Button, Grid, Typography, Container, Box } from '@mui/material';
+import { Theaters, MovieFilter, Chat, Favorite, Star } from '@mui/icons-material';
+import { keyframes } from '@emotion/react';
+
+// Define a subtle animation for the buttons
+const floatAnimation = keyframes`
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0); }
+`;
 
 const RecommenderPage = () => {
   const buttonStyles = {
-    height: 120,
+    height: 140,
     fontSize: '1.1rem',
     fontWeight: 500,
     borderRadius: 2,
@@ -13,9 +21,11 @@ const RecommenderPage = () => {
     flexDirection: 'column',
     gap: 2,
     padding: 3,
+    transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
     '&:hover': {
-      transform: 'translateY(-2px)',
-      transition: 'transform 0.2s ease-in-out'
+      transform: 'translateY(-4px)',
+      boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)',
+      animation: `${floatAnimation} 3s ease-in-out infinite`
     }
   };
 
@@ -39,55 +49,63 @@ const RecommenderPage = () => {
       description: 'Get personalized recommendations through chat',
       icon: <Chat sx={{ fontSize: 40 }} />,
       color: 'success',
-      href: '/chat_recommender'
+      href: '/explore/user_chat_recommender'
     },
     {
       title: 'Select & Get Recommendations',
       description: 'Select favorite movies to receive tailored suggestions',
       icon: <Favorite sx={{ fontSize: 40 }} />,
       color: 'warning',
-      href: '/search_recommender'
+      href: '/explore/favorite_item_recommender'
+    },
+    {
+      title: 'Select, Rate & Get Recommendations',
+      description: 'Select and rate favorite movies to receive tailored suggestions',
+      icon: <Star sx={{ fontSize: 40 }} />,
+      color: 'error',
+      href: '/explore/user_rating_recommender'
     }
   ];
 
   return (
-    <Container maxWidth="lg" sx={{ py: 6 }}>
-      <Typography 
-        variant="h3" 
-        align="center" 
-        sx={{ 
-          mb: 2,
-          fontWeight: 'bold',
-          background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
-          backgroundClip: 'text',
-          WebkitBackgroundClip: 'text',
-          color: 'transparent'
-        }}
-      >
-        Movie Recommendations
-      </Typography>
-      
-      <Typography 
-        variant="h6" 
-        align="center" 
-        sx={{ 
-          mb: 6,
-          color: 'text.secondary',
-          maxWidth: 600,
-          mx: 'auto'
-        }}
-      >
-        Discover your next favorite movie through our personalized recommendation features
-      </Typography>
+    <Container maxWidth="lg" sx={{ py: 8 }}>
+      <Box textAlign="center" mb={6}>
+        <Typography 
+          variant="h2" 
+          sx={{ 
+            fontWeight: 'bold',
+            background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+            backgroundClip: 'text',
+            WebkitBackgroundClip: 'text',
+            color: 'transparent',
+            mb: 2
+          }}
+        >
+          Movie Recommendations
+        </Typography>
+        
+        <Typography 
+          variant="h6" 
+          sx={{ 
+            color: 'text.secondary',
+            maxWidth: 600,
+            mx: 'auto',
+            lineHeight: 1.6
+          }}
+        >
+          Discover your next favorite movie through our personalized recommendation features
+        </Typography>
+      </Box>
 
       <Grid container spacing={4}>
         {featureCards.map((card) => (
           <Grid item xs={12} md={6} key={card.title}>
-            <a 
+            <Box
+              component="a"
               href={card.href}
               target="_blank"
               rel="noopener noreferrer"
-              style={{ textDecoration: 'none' }}
+              sx={{ textDecoration: 'none' }}
             >
               <Button
                 variant="contained"
@@ -95,24 +113,26 @@ const RecommenderPage = () => {
                 color={card.color}
                 sx={buttonStyles}
               >
-                {card.icon}
-                <div>
-                  <Typography variant="h6" component="div">
-                    {card.title}
-                  </Typography>
-                  <Typography 
-                    variant="body2" 
-                    sx={{ 
-                      mt: 1,
-                      opacity: 0.9,
-                      color: 'inherit'
-                    }}
-                  >
-                    {card.description}
-                  </Typography>
-                </div>
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                  {card.icon}
+                  <Box>
+                    <Typography variant="h6" component="div" sx={{ fontWeight: 600 }}>
+                      {card.title}
+                    </Typography>
+                    <Typography 
+                      variant="body2" 
+                      sx={{ 
+                        mt: 1,
+                        opacity: 0.9,
+                        color: 'inherit'
+                      }}
+                    >
+                      {card.description}
+                    </Typography>
+                  </Box>
+                </Box>
               </Button>
-            </a>
+            </Box>
           </Grid>
         ))}
       </Grid>

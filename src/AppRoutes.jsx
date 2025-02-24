@@ -16,9 +16,9 @@ import SimilarMediaPage from '@src/pages/SimilarMediaPage';
 import SimilarMediaFromTMDB from '@src/pages/SimilarMediaFromTMDB';
 import DiscoverSimilarMediaPage from '@src/pages/DiscoverSimilarMediaPage';
 import ExploraChat from '@src/pages/ExploraChat';
-import RatingPage from '@src/pages/RatingPage';
 import RecommenderPage from '@src/pages/RecommenderPage';
 import SearchAndRecommendationsPage from '@src/pages/SearchAndRecommendationsPage';
+import SearchRateAndRecommendationsPage from '@src/pages/SearchRateAndRecommendations';
 
 const AppRoutes = () => (
   <Routes>
@@ -33,13 +33,13 @@ const AppRoutes = () => (
     <Route path='/person/:personId' element={<PersonDetailsPage />} />
     <Route path='/profile' element={<ProfilePage />} />
 
-    <Route path='/recommender' element={<RecommenderPage />} />
+    <Route path='/explore/recommenders' element={<RecommenderPage />} />
     <Route path='/explore/similar' element={<SimilarMediaPage />} />
     <Route path='/explore/discover' element={<DiscoverSimilarMediaPage />} />
     <Route path='/explore/similar_from_tmdb' element={<SimilarMediaFromTMDB />} />
-    <Route path='/chat_recommender' element={<ExploraChat />} />
-    <Route path='/rating_recommender' element={<RatingPage />} />
-    <Route path='/search_recommender' element={<SearchAndRecommendationsPage />} />
+    <Route path='/explore/user_chat_recommender' element={<ExploraChat />} />
+    <Route path='/explore/favorite_item_recommender' element={<SearchAndRecommendationsPage />} />
+    <Route path='/explore/user_rating_recommender' element={<SearchRateAndRecommendationsPage />} />
   </Routes>
 );
 

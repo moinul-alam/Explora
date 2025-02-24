@@ -20,6 +20,7 @@ import VALID_FILTERS from '@src/components/DiscoverSimilarMedia/DiscoveryFilter'
 import FallbackImage from '@src/assets/fallback-image.png';
 import api from "@src/utils/api";
 import MediaShowcase from "@src/components/Common/MediaShowcase";
+import MovieLoader from '@src/components/Common/MovieLoader';
 
 
 const DiscoverSimilarMediaPage = () => {
@@ -287,10 +288,10 @@ const DiscoverSimilarMediaPage = () => {
 
         <Box sx={{ mt: 4 }}>
           {loading && (
-            <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-              <CircularProgress />
-            </Box>
-          )}
+                      <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
+                        <MovieLoader />
+                      </Box>
+                    )}
             <MediaShowcase
               data={results.map((item) => ({
                 ...item,

@@ -7,20 +7,23 @@ const NavigationMenu = ({ isMobile, onItemClick }) => {
     { label: 'Trending Movies', link: '/category/movie/trending' },
     { label: 'Popular Movies', link: '/category/movie/popular' },
     { label: 'Top Rated Movies', link: '/category/movie/top_rated' },
+    { label: 'Explore Movie Genres', link: '/explore/genre/movie/list' }
   ];
 
   const tvShowsItems = [
     { label: 'Trending TV Shows', link: '/category/tv/trending' },
     { label: 'Popular TV Shows', link: '/category/tv/popular' },
     { label: 'Top Rated TV Shows', link: '/category/tv/top_rated' },
+    { label: 'Explore TV Show Genres', link: '/explore/genre/tv/list' },
   ];
 
   const exploreItems = [
-    { label: 'Recommender', link: '/recommender' },
+    { label: 'All Recommender Features', link: '/explore/recommenders' },
     { label: 'Find Similar Movies or TV Shows', link: '/explore/similar' },
     { label: 'Discover Movies and TV Shows', link: '/explore/discover' },
-    { label: 'Explore Movie Genres', link: '/explore/genre/movie/list' },
-    { label: 'Explore TV Show Genres', link: '/explore/genre/tv/list' },
+    { label: 'Chat and Get Recommendations', link: '/explore/user_chat_recommender' },
+    { label: 'Select and Get Recommendations', link: '/explore/favorite_item_recommender' },
+    { label: 'Select, Rate and Get Recommendations', link: '/explore/user_rating_recommender' },
     { label: 'Find Similar From TMDB', link: '/explore/similar_from_tmdb' },
   ];
 

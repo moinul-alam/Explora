@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Box, Typography, CircularProgress, Button, IconButton } from "@mui/material";
+import { Box, Typography, CircularProgress, Button, IconButton, Slider } from "@mui/material";
 import { Close, ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
 import MediaShowcase from "@src/components/Common/MediaShowcase";
 import MediaCard from "@src/components/Common/MediaCard/MediaCard";
@@ -7,14 +7,12 @@ import SearchBar from "@src/components/Common/SearchBar";
 import api from "@src/utils/api";
 import MovieLoader from "@src/components/Common/MovieLoader";
 
-
-const SearchAndRecommendationsPage = () => {
+const SearchRateAndRecommendationsPage = () => {
   const [selectedMedia, setSelectedMedia] = useState([]);
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(false);
   const scrollContainerRef = useRef(null);
-
-  const [hasFetched, setHasFetched] = useState(false); 
+  const [hasFetched, setHasFetched] = useState(false);
 
   const fetchRecommendations = async () => {
     if (selectedMedia.length === 0) return;
@@ -23,8 +21,15 @@ const SearchAndRecommendationsPage = () => {
     setHasFetched(true);
     
     try {
-      const response = await api.post("/recommender/collaborative/item-based-recommendations", {
-        tmdb_ids: selectedMedia.map((media) => media.tmdb_id || media.id),
+      // Format ratings exactly as expected by the backend
+      const ratings = {};
+      selectedMedia.forEach(media => {
+        const id = (media.tmdb_id || media.id).toString();
+        ratings[id] = media.rating;
+      });
+
+      const response = await api.post("/recommender/collaborative/user-based-recommendations", {
+        ratings: ratings
       });
 
       if (response?.data && Array.isArray(response.data)) {
@@ -42,15 +47,23 @@ const SearchAndRecommendationsPage = () => {
   const handleSelect = (media) => {
     const mediaId = media.tmdb_id || media.id;
     if (!selectedMedia.some((item) => (item.tmdb_id || item.id) === mediaId)) {
-      setSelectedMedia([...selectedMedia, media]);
+      setSelectedMedia([...selectedMedia, { ...media, rating: 5 }]); // Default rating of 5
     }
   };
 
   const handleRemove = (id) => {
     setSelectedMedia(selectedMedia.filter((media) => (media.tmdb_id || media.id) !== id));
     if (selectedMedia.length === 1) {
-      setRecommendations([]); // Only clear recommendations when removing last item
+      setRecommendations([]);
     }
+  };
+
+  const handleRatingChange = (id, newRating) => {
+    setSelectedMedia(selectedMedia.map(media => 
+      (media.tmdb_id || media.id) === id 
+        ? { ...media, rating: newRating } 
+        : media
+    ));
   };
 
   const handleGetRecommendations = () => {
@@ -78,7 +91,7 @@ const SearchAndRecommendationsPage = () => {
     <>
       <Box sx={{ textAlign: "center", mb: 3 }}>
         <Typography variant="h3" sx={{ p: 3 }}>
-          Search and Select Your Favorite Movies or TV Shows
+          Search, Rate and Get Recommendations
         </Typography>
       </Box>
 
@@ -87,7 +100,7 @@ const SearchAndRecommendationsPage = () => {
         <SearchBar onSelect={handleSelect} />
       </Box>
 
-      {/* Selected Media Box with Scrollable Feature */}
+      {/* Selected Media Box with Scrollable Feature and Rating */}
       {selectedMedia.length > 0 && (
         <Box sx={{ width: "100%", maxWidth: "800px", mx: "auto", mb: 3, p: 2, border: "1px solid #ddd", borderRadius: 2, position: "relative" }}>
           <Typography variant="h6" sx={{ mb: 1 }}>Selected Movies</Typography>
@@ -143,6 +156,18 @@ const SearchAndRecommendationsPage = () => {
                 >
                   <Close fontSize="small" />
                 </IconButton>
+                {/* Rating Slider */}
+                <Box sx={{ mt: 1, px: 1 }}>
+                  <Slider
+                    value={media.rating}
+                    min={1}
+                    max={5}
+                    step={0.5}
+                    onChange={(_, value) => handleRatingChange(media.tmdb_id || media.id, value)}
+                    valueLabelDisplay="auto"
+                    sx={{ width: "100%" }}
+                  />
+                </Box>
               </Box>
             ))}
           </Box>
@@ -181,25 +206,25 @@ const SearchAndRecommendationsPage = () => {
           </Box>
         )}
         {recommendations.length > 0 ? (
-  <MediaShowcase
-    key={showcaseKey}
-    data={recommendations.map((media) => ({
-      ...media,
-      mediaType: media.mediaType || "movie",
-      vote_average: Number(media.vote_average) || 0,
-      year: media.release_date ? new Date(media.release_date).getFullYear() : "N/A",
-    }))}
-    detailsLink={(media) => `/details/${media.mediaType}/${media.tmdb_id || media.id}`}
-    customItemsPerView={{ xs: 1, sm: 2, md: 3, lg: 3 }}
-  />
-) : (
-  hasFetched && !loading && recommendations.length === 0 && (
-    <Typography align="center">No recommendations found.</Typography>
-  )
-)}
+          <MediaShowcase
+            key={showcaseKey}
+            data={recommendations.map((media) => ({
+              ...media,
+              mediaType: media.mediaType || "movie",
+              vote_average: Number(media.vote_average) || 0,
+              year: media.release_date ? new Date(media.release_date).getFullYear() : "N/A",
+            }))}
+            detailsLink={(media) => `/details/${media.mediaType}/${media.tmdb_id || media.id}`}
+            customItemsPerView={{ xs: 1, sm: 2, md: 3, lg: 3 }}
+          />
+        ) : (
+          hasFetched && !loading && recommendations.length === 0 && (
+            <Typography align="center">No recommendations found.</Typography>
+          )
+        )}
       </Box>
     </>
   );
 };
 
-export default SearchAndRecommendationsPage;
+export default SearchRateAndRecommendationsPage;

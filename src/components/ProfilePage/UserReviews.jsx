@@ -1,13 +1,7 @@
 import { Paper, Typography, Box } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import MediaShowcase from "@src/components/Common/MediaShowcase";
 
 const UserReviews = ({ reviews }) => {
-  const navigate = useNavigate();
-
-  const handleClick = (path) => {
-    navigate(path); 
-  };
 
   return (
     <Paper sx={{ padding: 4 }}>
@@ -21,9 +15,7 @@ const UserReviews = ({ reviews }) => {
             userComment: review.comment,
             userRating: review.rating,
           }))}
-          onCardClick={(media) =>
-            handleClick(`/details/${media.media_type}/${media.tmdb_id}`)
-          }
+          detailsLink={(item) => `/details/${item.type}/${item.tmdb_id}`}
         />
       ) : (
         <Typography>No reviews available.</Typography>

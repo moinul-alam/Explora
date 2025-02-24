@@ -55,7 +55,7 @@ const HeroText = () => {
             fontWeight: 'bold',
             '&:hover': { backgroundColor: '#E50914' },
           }}
-          onClick={() => navigate('/recommender')}
+          onClick={() => navigate('/explore/recommenders')}
         >
           Try Now
         </Button>
