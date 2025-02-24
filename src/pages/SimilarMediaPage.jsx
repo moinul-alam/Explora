@@ -8,7 +8,7 @@ import SearchBar from "@src/components/Common/SearchBar";
 
 const SimilarMediaPage = () => {
   const [selectedMedia, setSelectedMedia] = useState(null);
-
+  
   const shouldFetch = Boolean(selectedMedia?.mediaType && selectedMedia?.id);
   const { data: similarMedia, loading } = useFetchData(
     shouldFetch ? `recommender/content-based/${selectedMedia.mediaType}/${selectedMedia.id}/similar` : null,
@@ -65,10 +65,10 @@ const SimilarMediaPage = () => {
               <MediaCard
                 mediaData={{
                   ...selectedMedia,
-                  vote_average: Number(selectedMedia.vote_average) || 0, // Ensure it's a number
+                  vote_average: Number(selectedMedia.vote_average) || 0,
                   year: selectedMedia.release_date
                     ? new Date(selectedMedia.release_date).getFullYear()
-                    : "N/A", // Extract year
+                    : "N/A",
                 }}
               />
             </Box>
@@ -84,11 +84,12 @@ const SimilarMediaPage = () => {
           )}
           {similarMedia && similarMedia.length > 0 && (
             <MediaShowcase
+              key={`${selectedMedia?.mediaType}-${selectedMedia?.id}`} // Add this key prop
               data={similarMedia.map((media) => ({
                 ...media,
                 mediaType: media.mediaType || selectedMedia.mediaType,
-                vote_average: Number(media.vote_average) || 0, // Ensure numeric value
-                year: media.release_date ? new Date(media.release_date).getFullYear() : "N/A", // Extract year
+                vote_average: Number(media.vote_average) || 0,
+                year: media.release_date ? new Date(media.release_date).getFullYear() : "N/A",
               }))}
               detailsLink={(media) => `/details/${media.mediaType}/${media.tmdb_id}`}
               customItemsPerView={{

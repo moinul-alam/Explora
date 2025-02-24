@@ -10,9 +10,10 @@ const SearchBar = ({ searchTypes = ["movie", "tv", "person"], placeholderText = 
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [open, setOpen] = useState(false);
-  const [inputValue, setInputValue] = useState(""); // Add this line to control input value
   const navigate = useNavigate();
   const searchResults = useSearch(searchQuery);
+
+  // Responsive hook for managing screen size
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -47,7 +48,6 @@ const SearchBar = ({ searchTypes = ["movie", "tv", "person"], placeholderText = 
       }
       setOpen(false);
       setSearchQuery("");
-      setInputValue(""); // Add this line to clear input value
     }
   };
 
@@ -63,12 +63,7 @@ const SearchBar = ({ searchTypes = ["movie", "tv", "person"], placeholderText = 
         freeSolo
         options={filteredResults}
         getOptionLabel={(option) => (typeof option === "string" ? option : option.title || "")}
-        onInputChange={(event, newInputValue) => {
-          setInputValue(newInputValue); // Add this line to update input value
-          setSearchQuery(newInputValue);
-        }}
-        inputValue={inputValue} // Add this line to control input value
-        value={null} // Add this line to ensure the value is always null after selection
+        onInputChange={(event, newInputValue) => setSearchQuery(newInputValue)}
         onChange={handleSelect}
         loading={isSearching}
         loadingText="Searching..."
