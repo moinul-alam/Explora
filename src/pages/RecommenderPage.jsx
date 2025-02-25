@@ -70,7 +70,7 @@ const RecommenderPage = () => {
       description: 'Rate favorite movies to receive tailored suggestions',
       icon: <GridOn sx={{ fontSize: 40 }} />,
       color: 'error',
-      href: '/explore/advanced_recommender'
+      href: '/explore/weighed_hybrid_recommender'
     }
   ];
 
