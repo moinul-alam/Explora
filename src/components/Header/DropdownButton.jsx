@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { Button, Menu, MenuItem } from '@mui/material';
 import { ArrowDropDown as ArrowDropDownIcon } from '@mui/icons-material';
 
@@ -9,19 +9,6 @@ const DropdownButton = ({ label, items, onItemClick }) => {
 
   const handleClick = (event) => setAnchorEl(event.currentTarget);
   const handleClose = () => setAnchorEl(null);
-
-  const handleItemClick = (item) => {
-    if (onItemClick) {
-      onItemClick(item);
-    }
-
-    if (item.label === 'Logout') {
-      item.onClick();
-    } else if (item.link) {
-      navigate(item.link);
-    }
-    handleClose();
-  };
 
   return (
     <>
@@ -33,9 +20,7 @@ const DropdownButton = ({ label, items, onItemClick }) => {
           textTransform: 'none',
           fontWeight: 'bold',
           color: 'inherit',
-          '&:hover': {
-            backgroundColor: 'transparent',
-          },
+          '&:hover': { backgroundColor: 'transparent' },
           '&::before': {
             content: '""',
             position: 'absolute',
@@ -47,9 +32,7 @@ const DropdownButton = ({ label, items, onItemClick }) => {
             transition: 'all 0.8s ease',
             transform: 'translateX(-50%)',
           },
-          '&:hover::before': {
-            width: '100%',
-          },
+          '&:hover::before': { width: '100%' },
         }}
       >
         {label}
@@ -61,20 +44,19 @@ const DropdownButton = ({ label, items, onItemClick }) => {
         open={Boolean(anchorEl)}
         onClose={handleClose}
         sx={{
-          '& .MuiPaper-root': {
-            borderRadius: 0.5,
-          },
+          '& .MuiPaper-root': { borderRadius: 0.5 },
         }}
       >
         {items.map((item, index) => (
           <MenuItem
             key={index}
-            onClick={() => handleItemClick(item)}
-            component={item.link ? "a" : "button"}
-            href={item.link || undefined}
-            target={item.link ? "_self" : undefined}
-            rel={item.link ? "noopener noreferrer" : undefined}
-            sx={{ textDecoration: "none", color: "inherit" }}
+            component={RouterLink} // Use React Router's Link
+            to={item.link}
+            onClick={handleClose} // Close menu after clicking
+            sx={{
+              textDecoration: 'none',
+              color: 'inherit',
+            }}
           >
             {item.label}
           </MenuItem>

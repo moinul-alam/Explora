@@ -16,22 +16,21 @@ const WeighedHybridRecommender = () => {
 
   const fetchRecommendations = async () => {
     if (selectedMedia.length === 0) return;
-
+  
     setLoading(true);
     setHasFetched(true);
     
     try {
-      // Format ratings exactly as expected by the backend
-      const ratings = {};
-      selectedMedia.forEach(media => {
-        const id = (media.tmdb_id || media.id).toString();
-        ratings[id] = media.rating;
-      });
-
-      const response = await api.post("/recommender/collaborative/user-based-recommendations", {
+      // Format ratings as an array of objects
+      const ratings = selectedMedia.map(media => ({
+        tmdb_id: media.tmdb_id || media.id,
+        rating: media.rating
+      }));
+  
+      const response = await api.post("/recommender/hybrid/weighed", {
         ratings: ratings
       });
-
+  
       if (response?.data && Array.isArray(response.data)) {
         setRecommendations(response.data);
       } else {
@@ -42,7 +41,7 @@ const WeighedHybridRecommender = () => {
       setRecommendations([]);
     }
     setLoading(false);
-  };
+  };  
 
   const handleSelect = (media) => {
     const mediaId = media.tmdb_id || media.id;
