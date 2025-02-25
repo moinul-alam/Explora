@@ -1,18 +1,23 @@
 import { Box, Typography, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 const HeroText = () => {
   const navigate = useNavigate();
 
   return (
     <Box
+      component={motion.div}
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 1, ease: 'easeOut' }}
       sx={{
         position: 'absolute',
         top: 0,
         left: 0,
         width: '100%',
         height: '100%',
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9))',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
@@ -20,56 +25,81 @@ const HeroText = () => {
         color: 'white',
         textAlign: 'center',
         zIndex: 1,
-        px: 2,
+        px: 3,
       }}
     >
       <Typography
+        component={motion.h2}
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5, duration: 1, ease: 'easeOut' }}
         variant='h2'
         sx={{
           mb: 2,
           fontWeight: 'bold',
-          textShadow: '2px 2px 4px rgba(0, 0, 0, 0.6)',
+          textTransform: 'uppercase',
+          letterSpacing: '3px',
+          textShadow: '3px 3px 6px rgba(0, 0, 0, 0.7)',
         }}
       >
-        Welcome to EXPLORA
+        Welcome to <span style={{ color: '#E50914' }}>Explora</span>
       </Typography>
       <Typography
+        component={motion.h5}
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1, duration: 1, ease: 'easeOut' }}
         variant='h5'
         sx={{
           mt: 2,
-          maxWidth: '35rem',
-          lineHeight: 1.5,
-          textShadow: '1px 1px 3px rgba(0, 0, 0, 0.5)',
+          maxWidth: '40rem',
+          lineHeight: 1.6,
+          fontSize: '1.3rem',
+          opacity: 0.9,
+          textShadow: '1px 1px 4px rgba(0, 0, 0, 0.5)',
         }}
       >
-        Discover movies and TV shows with AI-powered recommendation engine.
+        Your personal AI-powered guide to discovering the best movies and TV shows.
       </Typography>
-      <Box sx={{ mt: 4, display: 'flex', gap: 2 }}>
+      <Box
+        component={motion.div}
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 1.5, duration: 0.8, ease: 'easeOut' }}
+        sx={{ mt: 4, display: 'flex', gap: 2 }}
+      >
         <Button
           variant='contained'
           sx={{
-            backgroundColor: '#8B0000',
+            backgroundColor: '#E50914',
             color: 'white',
-            px: 4,
-            py: 1,
+            px: 5,
+            py: 1.5,
+            fontSize: '1.1rem',
             fontWeight: 'bold',
-            '&:hover': { backgroundColor: '#E50914' },
+            borderRadius: '8px',
+            transition: 'all 0.3s ease',
+            '&:hover': { backgroundColor: '#B20710', transform: 'scale(1.05)' },
           }}
           onClick={() => navigate('/explore/recommenders')}
         >
-          Try Now
+          Start Exploring
         </Button>
         <Button
           variant='outlined'
           sx={{
             borderColor: 'white',
             color: 'white',
-            px: 4,
-            py: 1,
+            px: 5,
+            py: 1.5,
+            fontSize: '1.1rem',
             fontWeight: 'bold',
+            borderRadius: '8px',
+            transition: 'all 0.3s ease',
             '&:hover': {
               backgroundColor: 'rgba(255, 255, 255, 0.2)',
               borderColor: 'white',
+              transform: 'scale(1.05)',
             },
           }}
           onClick={() => navigate('/about')}
