@@ -7,25 +7,18 @@ const api = axios.create({
   withCredentials: true,
 });
 
-// Request Interceptor: Add start time
 api.interceptors.request.use(
   (config) => {
-    config.metadata = { startTime: performance.now() };  // Store request start time
     MODE !== 'production' && console.log(`[API Request] ${config.method.toUpperCase()}: ${config.url}`);
     return config;
   },
   (error) => Promise.reject(error)
 );
 
-// Response Interceptor: Calculate and log duration
 api.interceptors.response.use(
-  (response) => {
-    const endTime = performance.now();
-    const duration = (endTime - response.config.metadata.startTime).toFixed(2);
-    MODE !== 'production' && console.log(`[API Timing] ${response.config.url}: ${duration} ms`);
-
-    MODE !== 'production' && console.log('[API Response]', response.data);
-    return response.data;
+  ({ data }) => {
+    MODE !== 'production' && console.log('[API Response]', data);
+    return data;
   },
   (error) => {
     console.error('[API Error]', error.response?.data || error.message);

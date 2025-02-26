@@ -136,9 +136,9 @@ const WeighedHybridRecommender = () => {
                 key={media.tmdb_id || media.id} 
                 sx={{ 
                   position: "relative", 
-                  flex: "0 0 120px",
-                  width: "120px",
-                  minWidth: "120px",
+                  // flex: "0 0 120px",
+                  // width: "120px",
+                  // minWidth: "120px",
                 }}
               >
                 <MediaCard mediaData={{...media}} />

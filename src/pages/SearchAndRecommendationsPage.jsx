@@ -78,7 +78,7 @@ const SearchAndRecommendationsPage = () => {
     <>
       <Box sx={{ textAlign: "center", mb: 3 }}>
         <Typography variant="h3" sx={{ p: 3 }}>
-          Search and Select Your Favorite Movies or TV Shows
+          Select Your Favorite Movies or TV Shows
         </Typography>
       </Box>
 
@@ -123,10 +123,7 @@ const SearchAndRecommendationsPage = () => {
               <Box 
                 key={media.tmdb_id || media.id} 
                 sx={{ 
-                  position: "relative", 
-                  flex: "0 0 120px",
-                  width: "120px",
-                  minWidth: "120px",
+                  position: "relative"
                 }}
               >
                 <MediaCard mediaData={{...media}} />

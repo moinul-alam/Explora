@@ -6,11 +6,11 @@ import useSearch from "@src/hooks/useSearch";
 import FallbackImage from "@src/assets/fallback-image.png";
 import { useTheme, useMediaQuery } from "@mui/material";
 
-const SearchBar = ({ searchTypes = ["movie", "tv", "person"], placeholderText = "Search...", onSelect }) => {
+const SearchBar = ({ searchTypes = ["movie", "tv", "person"], placeholderText = "Search Movies and TV Shows . . .", onSelect }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [open, setOpen] = useState(false);
-  const [inputValue, setInputValue] = useState(""); // Add this line to control input value
+  const [inputValue, setInputValue] = useState("");
   const navigate = useNavigate();
   const searchResults = useSearch(searchQuery);
   const theme = useTheme();
