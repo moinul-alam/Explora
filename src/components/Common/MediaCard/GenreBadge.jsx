@@ -1,26 +1,26 @@
-import { Box } from "@mui/material";
+import { Box, Chip } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
-const GenreBadge = ({ genres }) => {
+const GenreBadge = ({ genres, mediaType }) => {
+  const navigate = useNavigate();
+
   return (
-    <Box
-      className="genre-overlay"
-      sx={{
-        position: "absolute",
-        bottom: 0,
-        left: 0,
-        width: "100%",
-        background: "rgba(0, 0, 0, 0.7)",
-        color: "#fff",
-        textAlign: "center",
-        padding: "0.5rem",
-        fontSize: "0.75rem",
-        borderRadius: "0 0 0.625rem 0.625rem",
-        opacity: 0,
-        visibility: "hidden",
-        transition: "opacity 0.3s ease, visibility 0.3s ease",
-      }}
-    >
-      {genres.length > 0 ? genres.join(", ") : ""}
+    <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+      {genres.map((genre) => (
+        <Chip
+          key={genre.id}
+          label={genre.name}
+          sx={{
+            backgroundColor: "#444",
+            color: "#fff",
+            fontSize: { xs: "0.5rem", md: "0.8rem" },
+            "&:hover": {
+              backgroundColor: "#555",
+              cursor: "pointer",
+            },
+          }}
+        />
+      ))}
     </Box>
   );
 };

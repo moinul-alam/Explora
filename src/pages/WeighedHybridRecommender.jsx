@@ -27,7 +27,7 @@ const WeighedHybridRecommender = () => {
         rating: media.rating
       }));
   
-      const response = await api.post("/recommender/hybrid/weighed", {
+      const response = await api.post("/recommender/hybrid/weighted", {
         ratings: ratings
       });
   

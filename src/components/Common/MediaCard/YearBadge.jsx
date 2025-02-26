@@ -10,7 +10,7 @@ const YearBadge = ({ year }) => (
     }}
   >
     <Typography variant="body2" sx={{ fontSize: '1rem', fontWeight: 'bold', color: 'white' }}>
-      {year ? new Date(year).getFullYear() : 'Unknown'}
+      {year ? new Date(year).getFullYear() : ''}
     </Typography>
   </Box>
 );

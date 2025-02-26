@@ -17,7 +17,7 @@ const RatingBadge = ({ rating }) => (
   >
     <Star sx={{ fontSize: '1.1rem' }} />
     <Typography variant="body2" sx={{ fontSize: '1rem', fontWeight: 'bold' }}>
-      {rating ? rating.toFixed(1) : 'N/A'}
+      {rating ? rating.toFixed(1) : ''}
     </Typography>
   </Box>
 );
