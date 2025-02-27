@@ -101,8 +101,8 @@ const FilmStrip = styled(Box)(({ theme }) => ({
 }));
 
 const SystemNode = styled(Box)(({ theme, active }) => ({
-  width: 100,
-  height: 100,
+  width: 80,
+  height: 80,
   borderRadius: 8,
   display: 'flex',
   justifyContent: 'center',
@@ -111,7 +111,7 @@ const SystemNode = styled(Box)(({ theme, active }) => ({
   background: active ? theme.palette.primary.light : theme.palette.grey[800],
   boxShadow: active ? `0 0 20px ${theme.palette.primary.light}` : 'none',
   transition: 'all 0.3s ease',
-  // animation: active ? `${pulse} 3s ease-in-out infinite` : 'none',
+  animation: active ? `${pulse} 1.5s ease-in-out infinite` : 'none',
   color: theme.palette.common.white,
   position: 'relative',
   padding: 2,
@@ -128,9 +128,9 @@ const BinaryPacket = styled(Box)(({ theme }) => ({
   color: theme.palette.common.white,
   fontFamily: 'monospace',
   fontSize: '0.75rem',
-  // fontWeight: 'bold',
+  fontWeight: 'bold',
   position: 'absolute',
-  top: -20,
+  top: -30,
   left: 0,
   zIndex: 10,
   boxShadow: `0 0 10px ${theme.palette.secondary.main}`,

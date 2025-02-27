@@ -75,7 +75,7 @@ const RecommenderPage = () => {
       icon: <GridOn sx={{ fontSize: isMobile ? 36 : 48 }} />,
       color: '#64b5f6', // Lighter blue
       category: 'advanced',
-      href: '/explore/weighed_hybrid_recommender'
+      href: '/explore/weighted_hybrid_recommender'
     }
   ];
 

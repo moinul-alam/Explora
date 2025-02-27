@@ -19,7 +19,7 @@ import ExploraChat from '@src/pages/ExploraChat';
 import RecommenderPage from '@src/pages/RecommenderPage';
 import SearchAndRecommendationsPage from '@src/pages/SearchAndRecommendationsPage';
 import SearchRateAndRecommendationsPage from '@src/pages/SearchRateAndRecommendations';
-import WeighedHybridRecommender from '@src/pages/WeighedHybridRecommender';
+import WeightedHybridRecommender from '@src/pages/WeightedHybridRecommender';
 
 const AppRoutes = () => (
   <Routes>
@@ -41,7 +41,7 @@ const AppRoutes = () => (
     <Route path='/explore/user_chat_recommender' element={<ExploraChat />} />
     <Route path='/explore/favorite_item_recommender' element={<SearchAndRecommendationsPage />} />
     <Route path='/explore/user_rating_recommender' element={<SearchRateAndRecommendationsPage />} />
-    <Route path='/explore/weighed_hybrid_recommender' element={<WeighedHybridRecommender />} />
+    <Route path='/explore/weighted_hybrid_recommender' element={<WeightedHybridRecommender />} />
   </Routes>
 );
 

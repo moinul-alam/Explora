@@ -18,6 +18,7 @@ const useSearch = (searchQuery) => {
               title: item.title || item.name, 
               poster_path: item.poster_path,
               overview: item.overview || 'No overview available',
+              genres: item.genres || [],
               vote_average: item.vote_average || 0,
               release_date: item.release_date || item.first_air_date || 'Unknown'
             }));

@@ -7,7 +7,7 @@ import SearchBar from "@src/components/Common/SearchBar";
 import api from "@src/utils/api";
 import MovieLoader from "@src/components/Common/MovieLoader";
 
-const WeighedHybridRecommender = () => {
+const WeightedHybridRecommender = () => {
   const [selectedMedia, setSelectedMedia] = useState([]);
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -226,4 +226,4 @@ const WeighedHybridRecommender = () => {
   );
 };
 
-export default WeighedHybridRecommender;
+export default WeightedHybridRecommender;

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Box, Typography, CircularProgress } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import useFetchData from "@src/hooks/useFetchData";
 import MediaShowcase from "@src/components/Common/MediaShowcase";
@@ -11,8 +11,17 @@ const SimilarMediaPage = () => {
   const [selectedMedia, setSelectedMedia] = useState(null);
   
   const shouldFetch = Boolean(selectedMedia?.mediaType && selectedMedia?.id);
-  const { data: similarMedia, loading } = useFetchData(
+  
+  // Fetch similar media
+  const { data: similarMedia, loading: similarLoading } = useFetchData(
     shouldFetch ? `recommender/content-based/${selectedMedia.mediaType}/${selectedMedia.id}/similar` : null,
+    {},
+    [selectedMedia]
+  );
+  
+  // Fetch detailed info for the selected media
+  const { data: selectedMediaDetails, loading: detailsLoading } = useFetchData(
+    shouldFetch ? `/media/${selectedMedia.mediaType}/${selectedMedia.id}` : null,
     {},
     [selectedMedia]
   );
@@ -20,7 +29,8 @@ const SimilarMediaPage = () => {
   // Debugging: Log selected media
   useEffect(() => {
     console.log("Selected Media:", selectedMedia);
-  }, [selectedMedia]);
+    console.log("Selected Media Details:", selectedMediaDetails);
+  }, [selectedMedia, selectedMediaDetails]);
 
   return (
     <>
@@ -63,34 +73,37 @@ const SimilarMediaPage = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <MediaCard
-                mediaData={{
-                  ...selectedMedia,
-                  vote_average: Number(selectedMedia.vote_average) || 0,
-                  year: selectedMedia.release_date
-                    ? new Date(selectedMedia.release_date).getFullYear()
-                    : "N/A",
-                }}
-              />
+              {detailsLoading ? (
+                <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
+                  <MovieLoader />
+                </Box>
+              ) : (
+                selectedMediaDetails && (
+                  <MediaCard
+                    mediaData={{
+                      ...selectedMedia,
+                      ...selectedMediaDetails,
+                      genres: selectedMediaDetails?.genres || []
+                    }}
+                  />
+                )
+              )}
             </Box>
           </Box>
         )}
 
         {/* Similar Media Showcase (4/5 width) */}
         <Box sx={{ flex: "4 1 80%", minWidth: "400px" }}>
-          {shouldFetch && loading && (
+          {shouldFetch && similarLoading && (
             <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
               <MovieLoader />
             </Box>
           )}
           {similarMedia && similarMedia.length > 0 && (
             <MediaShowcase
-              key={`${selectedMedia?.mediaType}-${selectedMedia?.id}`} // Add this key prop
+              key={`${selectedMedia?.mediaType}-${selectedMedia?.id}`}
               data={similarMedia.map((media) => ({
-                ...media,
-                mediaType: media.mediaType || selectedMedia.mediaType,
-                vote_average: Number(media.vote_average) || 0,
-                year: media.release_date ? new Date(media.release_date).getFullYear() : "N/A",
+                ...media
               }))}
               detailsLink={(media) => `/details/${media.mediaType}/${media.tmdb_id}`}
               customItemsPerView={{
