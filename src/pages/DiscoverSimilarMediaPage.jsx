@@ -292,10 +292,9 @@ const DiscoverSimilarMediaPage = () => {
                     )}
             <MediaShowcase
               data={results.map((item) => ({
-                ...item,
-                mediaType: item.mediaType || mediaType,
+                ...item
               }))}
-              detailsLink={(media) => `/details/${media.mediaType}/${media.id}`}
+              detailsLink={(media) => `/details/${media.media_type}/${media.tmdb_id}`}
             />
         </Box>
       </Box>
