@@ -21,7 +21,6 @@ const SearchRateAndRecommendationsPage = () => {
     setHasFetched(true);
     
     try {
-      // Format ratings exactly as expected by the backend
       const ratings = {};
       selectedMedia.forEach(media => {
         const id = (media.tmdb_id || media.id).toString();

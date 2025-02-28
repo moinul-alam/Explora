@@ -168,17 +168,18 @@ const ExploraChat = () => {
   const handleGetRecommendations = async () => {
     setIsLoading(true);
     try {
-      const ratings = ratedMovies.reduce((acc, movie) => {
-        acc[movie.tmdb_id] = movie.rating;
-        return acc;
-      }, {});
-  
+      const ratings = ratedMovies.map(movie => ({
+        tmdb_id: movie.tmdb_id,
+        rating: movie.rating
+      }));
+      
       const payload = {
         mediaType: selectedMediaType,
         ratings: ratings
       };
-  
-      const response = await api.post(`recommender/collaborative/user-based-recommendations`, payload);
+      
+      const response = await api.post(`/recommender/hybrid/switching`, payload)
+      
       const recommendations = response.data;
       setRecommendedMovies(recommendations);
       setPreviousStep('rating');
