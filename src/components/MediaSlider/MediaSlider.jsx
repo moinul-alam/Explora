@@ -1,6 +1,6 @@
 import { Box, Typography, Button } from '@mui/material';
 import { useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import useFetchData from '@src/hooks/useFetchData';
 import SkeletonLoader from '@src/components/Common/SkeletonLoader';
 import ErrorDisplay from '@src/components/Common/ErrorDisplay';
@@ -8,7 +8,6 @@ import MediaCard from '@src/components/Common/MediaCard/MediaCard';
 
 const MediaSlider = ({ title, fetchUrl, viewAllUrl, detailBaseUrl, color }) => {
   const { data: media, loading, error } = useFetchData(fetchUrl);
-  const navigate = useNavigate();
   const sliderRef = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
 

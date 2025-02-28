@@ -94,10 +94,10 @@ const PersonalInformation = ({ info, createdAt }) => {
 
   return (
     <Paper sx={{ padding: 4, marginBottom: 4, borderRadius: 1, display: 'flex', alignItems: 'center', boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)' }}>
-      <Avatar
+      {/* <Avatar
         src={formData.avatar || FallbackImage}
         sx={{ width: 120, height: 120, marginRight: 4, border: '3px solid #e0e0e0', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)' }}
-      />
+      /> */}
       <Box sx={{ flexGrow: 1 }}>
         <Typography variant='h4' fontWeight='bold' sx={{ color: '#3f51b5' }}>
           {formData.firstName} {formData.lastName || ''}
@@ -131,14 +131,14 @@ const PersonalInformation = ({ info, createdAt }) => {
                 />
               </LocalizationProvider>
               <TextField label='Location' name='location' value={formData.location} onChange={handleChange} fullWidth sx={{ marginBottom: 2 }} />
-              <Box sx={{ marginTop: 2 }}>
+              {/* <Box sx={{ marginTop: 2 }}>
                 <input type='file' accept='image/*' onChange={handleImageUpload} style={{ display: 'none' }} id='avatar-upload' />
                 <label htmlFor='avatar-upload'>
                   <Button variant='outlined' component='span'>
                     Upload New Avatar
                   </Button>
                 </label>
-              </Box>
+              </Box> */}
             </>
           ) : (
             <>
