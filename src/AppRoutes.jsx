@@ -20,6 +20,7 @@ import RecommenderPage from '@src/pages/RecommenderPage';
 import SearchAndRecommendationsPage from '@src/pages/SearchAndRecommendationsPage';
 import SearchRateAndRecommendationsPage from '@src/pages/SearchRateAndRecommendations';
 import WeightedHybridRecommender from '@src/pages/WeightedHybridRecommender';
+import AdvancedHybridRecommender from '@src/pages/AdvancedHybridRecommender';
 
 const AppRoutes = () => (
   <Routes>
@@ -42,6 +43,7 @@ const AppRoutes = () => (
     <Route path='/explore/favorite_item_recommender' element={<SearchAndRecommendationsPage />} />
     <Route path='/explore/user_rating_recommender' element={<SearchRateAndRecommendationsPage />} />
     <Route path='/explore/weighted_hybrid_recommender' element={<WeightedHybridRecommender />} />
+    <Route path='/explore/advanced_hybrid_recommender' element={<AdvancedHybridRecommender />} />
   </Routes>
 );
 

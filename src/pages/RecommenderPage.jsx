@@ -70,12 +70,12 @@ const RecommenderPage = () => {
       href: '/explore/user_rating_recommender'
     },
     {
-      title: 'Advanced Filters',
-      description: 'Customize your recommendations with multiple criteria and preferences',
+      title: 'Advanced Recommender',
+      description: 'Get recommendations from our most powerful recommendation engine',
       icon: <GridOn sx={{ fontSize: isMobile ? 36 : 48 }} />,
       color: '#64b5f6', // Lighter blue
       category: 'advanced',
-      href: '/explore/weighted_hybrid_recommender'
+      href: '/explore/advanced_hybrid_recommender'
     }
   ];
 

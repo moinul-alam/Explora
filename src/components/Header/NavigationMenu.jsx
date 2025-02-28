@@ -24,7 +24,8 @@ const NavigationMenu = ({ isMobile, onItemClick }) => {
     { label: 'Chat and Get Recommendations', link: '/explore/user_chat_recommender' },
     { label: 'Select and Get Recommendations', link: '/explore/favorite_item_recommender' },
     { label: 'Rate and Get Recommendations', link: '/explore/user_rating_recommender' },
-    { label: 'Advanced Recommendations', link: '/explore/weighted_hybrid_recommender' },
+    { label: 'Hybrid Recommendations', link: '/explore/weighted_hybrid_recommender' },
+    { label: 'Advanced Recommendations', link: '/explore/advanced_hybrid_recommender' },
     { label: 'Find Similar From TMDB', link: '/explore/similar_from_tmdb' },
   ];
 
