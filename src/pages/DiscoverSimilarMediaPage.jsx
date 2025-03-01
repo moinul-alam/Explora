@@ -32,6 +32,7 @@ const DiscoverSimilarMediaPage = () => {
   const [voteAverage, setVoteAverage] = useState('');
   const [keywords, setKeywords] = useState('');
   const [releaseYear, setReleaseYear] = useState('');
+  const [formSubmitted, setFormSubmitted] = useState(false);
   
   // Search state
   const [actorSearchQuery, setActorSearchQuery] = useState('');
@@ -48,6 +49,13 @@ const DiscoverSimilarMediaPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setFormSubmitted(true); // Mark the form as submitted
+    
+    // Add validation check before proceeding
+    if (!overview.trim() || selectedGenres.length === 0) {
+      return; // Don't proceed with the API call if validation fails
+    }
+    
     setLoading(true);
     setError(null);
 
@@ -105,8 +113,8 @@ const DiscoverSimilarMediaPage = () => {
                 rows={3}
                 value={overview}
                 onChange={(e) => setOverview(e.target.value)}
-                error={!overview.trim()}
-                helperText={!overview.trim() && "Storyline is required"}
+                error={formSubmitted && !overview.trim()}
+                helperText={formSubmitted && !overview.trim() && "Storyline is required"}
               />
             </Grid>
 
@@ -147,8 +155,8 @@ const DiscoverSimilarMediaPage = () => {
                   <TextField 
                     {...params} 
                     label="Genres" 
-                    error={selectedGenres.length === 0}
-                    helperText={selectedGenres.length === 0 && "At least one genre is required"}
+                    error={formSubmitted && selectedGenres.length === 0}
+              helperText={formSubmitted && selectedGenres.length === 0 && "At least one genre is required"}
                   />
                 )}
               />

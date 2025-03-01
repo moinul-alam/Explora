@@ -103,9 +103,11 @@ const SimilarMediaPage = () => {
             <MediaShowcase
               key={`${selectedMedia?.mediaType}-${selectedMedia?.id}`}
               data={similarMedia.map((media) => ({
-                ...media
+                ...media,
+                mediaType: media.media_type, // Map media_type to mediaType
+                id: media.tmdb_id           // Map tmdb_id to id if needed
               }))}
-              detailsLink={(media) => `/details/${media.mediaType}/${media.tmdb_id}`}
+              detailsLink={(media) => `/details/${media.mediaType || media.media_type}/${media.id || media.tmdb_id}`}
               customItemsPerView={{
                 xs: 1,
                 sm: 2,
