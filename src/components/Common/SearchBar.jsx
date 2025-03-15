@@ -20,7 +20,7 @@ const SearchBar = ({ searchTypes = ["movie", "tv", "person"], placeholderText = 
     let debounceTimeout;
     if (searchQuery.trim()) {
       setIsSearching(true);
-      debounceTimeout = setTimeout(() => setIsSearching(false), 500);
+      debounceTimeout = setTimeout(() => setIsSearching(false), 200);
     } else {
       setIsSearching(false);
     }
