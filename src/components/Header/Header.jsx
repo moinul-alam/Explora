@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { AppBar, Toolbar, Box, useMediaQuery, IconButton, Drawer } from '@mui/material';
 import { Menu as MenuIcon } from '@mui/icons-material';
 import { useThemeContext } from '@src/context/ThemeContext';
-import { Logo, NavigationMenu, SearchBar, ProfileArea, ThemeToggler } from '@src/components/Header';
+import { Logo, NavigationMenu, HeaderSearchBar, ProfileArea, ThemeToggler } from '@src/components/Header';
 
 const Header = () => {
   const { mode } = useThemeContext();
@@ -44,7 +44,7 @@ const Header = () => {
             }}
           >
             <NavigationMenu />
-            <SearchBar />
+            <HeaderSearchBar />
             <ProfileArea />
             <ThemeToggler />
           </Box>
@@ -53,7 +53,7 @@ const Header = () => {
         {/* Mobile Menu */}
         {isMobile && (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <SearchBar isMobile={true} />
+            <HeaderSearchBar isMobile={true} />
             <IconButton 
               color="inherit"
               onClick={toggleDrawer}

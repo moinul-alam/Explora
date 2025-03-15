@@ -1,12 +1,11 @@
-// MediaCard component
 import { Box, Typography } from "@mui/material";
 import RatingBadge from "@src/components/Common/MediaCard/RatingBadge";
 import YearBadge from "@src/components/Common/MediaCard/YearBadge";
 import MediaOverview from "@src/components/Common/MediaCard/MediaOverview";
 import GenreBadge from "@src/components/Common/MediaCard/GenreBadge";
 import FallbackImage from "@src/assets/fallback-image.png";
-import { useState } from "react";
-import { useInteractionTracker } from "@src/context/interactionContext";
+import { useState, useEffect } from "react";
+import { useInteractionTracker } from "@src/context/interactionContext";  // Import the custom hook
 
 const MediaCard = ({ mediaData = {} }) => {
   // Use the interaction context to track user interactions
@@ -17,8 +16,7 @@ const MediaCard = ({ mediaData = {} }) => {
   }
 
   const {
-    tmdb_id,
-    id,
+    tmdb_id,  // Assuming tmdb_id is passed in mediaData
     title,
     name,
     poster_path,
@@ -37,13 +35,11 @@ const MediaCard = ({ mediaData = {} }) => {
 
   // Function to handle user interaction (e.g., on card click)
   const handleClick = () => {
-    // Track interaction: use tmdb_id or fallback to id, and the rating (vote_average)
-    const mediaId = tmdb_id || id;
-    const rating = vote_average || 0;
-    
-    if (mediaId) {
-      trackInteraction(mediaId, rating);
-    }
+    // Track interaction: tmdb_id and the rating (vote_average)
+    trackInteraction({
+      tmdb_id,
+      rating: vote_average || 0,  // Use vote_average or 0 if it's not available
+    });
   };
 
   return (
