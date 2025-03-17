@@ -4,7 +4,7 @@ const theme = (mode) => {
   let theme = createTheme({
     palette: {
       mode,
-      ...(mode === 'dark'
+      ...(mode === 'light'
         ? {
             primary: {
               main: '#4A90E2',

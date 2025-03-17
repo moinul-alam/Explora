@@ -18,7 +18,7 @@ export const useThemeContext = () => {
 export const CustomThemeProvider = ({ children }) => {
   const getInitialTheme = () => {
     const savedTheme = localStorage.getItem('theme');
-    return savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : 'light';
+    return savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : 'dark';
   };
 
   const [mode, setMode] = useState(getInitialTheme);
