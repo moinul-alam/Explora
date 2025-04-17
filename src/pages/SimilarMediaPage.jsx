@@ -1,125 +1,199 @@
-import { useState, useEffect } from "react";
-import { Box, Typography } from "@mui/material";
-import { Link } from "react-router-dom";
-import useFetchData from "@src/hooks/useFetchData";
+import { useState, useRef, useEffect } from "react";
+import { Box, Typography, CircularProgress, Button, IconButton } from "@mui/material";
+import { Close, ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
 import MediaShowcase from "@src/components/Common/MediaShowcase";
 import MediaCard from "@src/components/Common/MediaCard/MediaCard";
 import SearchBar from "@src/components/Common/SearchBar";
+import api from "@src/utils/api";
 import MovieLoader from "@src/components/Common/MovieLoader";
 
-const SimilarMediaPage = () => {
-  const [selectedMedia, setSelectedMedia] = useState(null);
-  
-  const shouldFetch = Boolean(selectedMedia?.mediaType && selectedMedia?.id);
-  
-  // Fetch similar media
-  const { data: similarMedia, loading: similarLoading } = useFetchData(
-    shouldFetch ? `recommender/content-based/${selectedMedia.mediaType}/${selectedMedia.id}/similar` : null,
-    {},
-    [selectedMedia]
-  );
-  
-  // Fetch detailed info for the selected media
-  const { data: selectedMediaDetails, loading: detailsLoading } = useFetchData(
-    shouldFetch ? `/media/${selectedMedia.mediaType}/${selectedMedia.id}` : null,
-    {},
-    [selectedMedia]
-  );
 
-  // Debugging: Log selected media
-  useEffect(() => {
-    console.log("Selected Media:", selectedMedia);
-    console.log("Selected Media Details:", selectedMediaDetails);
-  }, [selectedMedia, selectedMediaDetails]);
+const SimilarMediaPage = () => {
+  const [selectedMedia, setSelectedMedia] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const scrollContainerRef = useRef(null);
+
+  const [hasFetched, setHasFetched] = useState(false); 
+
+  const fetchRecommendations = async () => {
+    if (selectedMedia.length === 0) return;
+
+    setLoading(true);
+    setHasFetched(true);
+    
+    try {
+      const response = await api.post("/recommender/content-based/similar-items", {
+        tmdb_ids: selectedMedia.map((media) => media.tmdb_id || media.id),
+      });
+
+      if (response?.data && Array.isArray(response.data)) {
+        setRecommendations(response.data);
+      } else {
+        setRecommendations([]);
+      }
+    } catch (error) {
+      console.error("Error fetching recommendations:", error.message);
+      setRecommendations([]);
+    }
+    setLoading(false);
+  };
+
+  const handleSelect = (media) => {
+    const mediaId = media.tmdb_id || media.id;
+    if (!selectedMedia.some((item) => (item.tmdb_id || item.id) === mediaId)) {
+      setSelectedMedia([...selectedMedia, media]);
+    }
+  };
+
+  const handleRemove = (id) => {
+    setSelectedMedia(selectedMedia.filter((media) => (media.tmdb_id || media.id) !== id));
+    if (selectedMedia.length === 1) {
+      setRecommendations([]); // Only clear recommendations when removing last item
+    }
+  };
+
+  const handleGetRecommendations = () => {
+    if (selectedMedia.length > 0) {
+      fetchRecommendations();
+    }
+  };
+
+  const scrollLeft = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: -200, behavior: "smooth" });
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: 200, behavior: "smooth" });
+    }
+  };
+
+  // Create a key based on the recommendations data itself
+  const showcaseKey = recommendations.map(media => media.tmdb_id || media.id).join('-');
 
   return (
     <>
       <Box sx={{ textAlign: "center", mb: 3 }}>
         <Typography variant="h3" sx={{ p: 3 }}>
-          Search for Similar Movies or TV Shows
+          Select Your Favorite Movies or TV Shows
         </Typography>
       </Box>
 
       {/* Search Bar */}
       <Box sx={{ width: "20rem", mx: "auto", mb: 2 }}>
-        <SearchBar onSelect={setSelectedMedia} />
+        <SearchBar onSelect={handleSelect} />
       </Box>
 
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "flex-start",
-          gap: 4,
-          width: "100%",
-          maxWidth: "1200px",
-          mx: "auto",
-          mt: 3,
-        }}
-      >
-        {/* Selected Media (1/5 width) */}
-        {selectedMedia && (
-          <Box sx={{ flex: "1 1 20%", minWidth: "200px", maxWidth: "250px" }}>
-            <Box
-              component={Link}
-              to={`/details/${selectedMedia.mediaType}/${selectedMedia.id}`}
-              sx={{
-                textDecoration: "none",
-                color: "inherit",
-                display: "block",
-                width: "100%",
-                pt: 2,
-              }}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {detailsLoading ? (
-                <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
-                  <MovieLoader />
-                </Box>
-              ) : (
-                selectedMediaDetails && (
-                  <MediaCard
-                    mediaData={{
-                      ...selectedMedia,
-                      ...selectedMediaDetails,
-                      genres: selectedMediaDetails?.genres || []
-                    }}
-                  />
-                )
-              )}
-            </Box>
+      {/* Selected Media Box with Scrollable Feature */}
+      {selectedMedia.length > 0 && (
+        <Box sx={{ width: "100%", maxWidth: "800px", mx: "auto", mb: 3, p: 2, border: "1px solid #ddd", borderRadius: 2, position: "relative" }}>
+          <Typography variant="h6" sx={{ mb: 1 }}>Selected Movies</Typography>
+          
+          <IconButton 
+            onClick={scrollLeft} 
+            sx={{ 
+              position: "absolute", 
+              left: "-20px", 
+              top: "50%", 
+              transform: "translateY(-50%)", 
+              background: "rgba(255,255,255,0.7)", 
+              "&:hover": { background: "rgba(255,255,255,1)" },
+              display: selectedMedia.length > 3 ? "block" : "none"
+            }}
+          >
+            <ArrowBackIos />
+          </IconButton>
+
+          <Box 
+            ref={scrollContainerRef}
+            sx={{
+              display: "flex",
+              overflowX: "auto",
+              scrollbarWidth: "none",
+              "&::-webkit-scrollbar": { display: "none" },
+              gap: "16px",
+              p: 1,
+              scrollBehavior: "smooth",
+            }}
+          >
+            {selectedMedia.map((media) => (
+              <Box 
+                key={media.tmdb_id || media.id} 
+                sx={{ 
+                  position: "relative"
+                }}
+              >
+                <MediaCard mediaData={{...media}} />
+                <IconButton
+                  onClick={() => handleRemove(media.tmdb_id || media.id)}
+                  sx={{
+                    position: "absolute",
+                    top: 0,
+                    right: 0,
+                    background: "rgba(255,255,255,0.7)",
+                    "&:hover": { background: "rgba(255,255,255,1)" },
+                  }}
+                  size="small"
+                >
+                  <Close fontSize="small" />
+                </IconButton>
+              </Box>
+            ))}
+          </Box>
+
+          <IconButton 
+            onClick={scrollRight} 
+            sx={{ 
+              position: "absolute", 
+              right: "-20px", 
+              top: "50%", 
+              transform: "translateY(-50%)", 
+              background: "rgba(255,255,255,0.7)", 
+              "&:hover": { background: "rgba(255,255,255,1)" },
+              display: selectedMedia.length > 3 ? "block" : "none"
+            }}
+          >
+            <ArrowForwardIos />
+          </IconButton>
+        </Box>
+      )}
+
+      {/* Get Recommendations Button */}
+      {selectedMedia.length > 0 && (
+        <Box sx={{ textAlign: "center", mb: 3 }}>
+          <Button variant="contained" onClick={handleGetRecommendations}>
+            Get Recommendations
+          </Button>
+        </Box>
+      )}
+
+      {/* Recommendations Showcase */}
+      <Box sx={{ width: "100%", maxWidth: "1200px", mx: "auto", mt: 3 }}>
+        {loading && (
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
+            <MovieLoader />
           </Box>
         )}
-
-        {/* Similar Media Showcase (4/5 width) */}
-        <Box sx={{ flex: "4 1 80%", minWidth: "400px" }}>
-          {shouldFetch && similarLoading && (
-            <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
-              <MovieLoader />
-            </Box>
-          )}
-          {similarMedia && similarMedia.length > 0 && (
-            <MediaShowcase
-              key={`${selectedMedia?.mediaType}-${selectedMedia?.id}`}
-              data={similarMedia.map((media) => ({
-                ...media,
-                mediaType: media.media_type, // Map media_type to mediaType
-                id: media.tmdb_id           // Map tmdb_id to id if needed
-              }))}
-              detailsLink={(media) => `/details/${media.mediaType || media.media_type}/${media.id || media.tmdb_id}`}
-              customItemsPerView={{
-                xs: 1,
-                sm: 2,
-                md: 3,
-                lg: 3,
-              }}
-            />
-          )}
-          {similarMedia && similarMedia.length === 0 && (
-            <Typography align="center">No similar media found.</Typography>
-          )}
-        </Box>
+        {recommendations.length > 0 ? (
+  <MediaShowcase
+    key={showcaseKey}
+    data={recommendations.map((media) => ({
+      ...media,
+      mediaType: media.mediaType || "movie",
+      vote_average: Number(media.vote_average) || 0,
+      year: media.release_date ? new Date(media.release_date).getFullYear() : "N/A",
+    }))}
+    detailsLink={(media) => `/details/${media.mediaType}/${media.tmdb_id || media.id}`}
+    customItemsPerView={{ xs: 1, sm: 2, md: 3, lg: 3 }}
+  />
+) : (
+  hasFetched && !loading && recommendations.length === 0 && (
+    <Typography align="center">No recommendations found.</Typography>
+  )
+)}
       </Box>
     </>
   );
